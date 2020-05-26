@@ -1,0 +1,37 @@
+Program na práci se soubory. Myšlenka jest: pro danou složku chci vyhledat
+(rekurzivne ci ne) všechny soubory vyhovující danému filtru. Následkne provést 
+pro vybrané soubory danou akci. Napr. zkopírovat/presunout do složky výstupní.
+Nebo provést prejmenování ci prosté vypsání souboru na obrazovku. Program by mel 
+by disajovaný na snadou rozširitelnost pro další a další nové operace se soubory.
+Rozšišitelnost pro nové filty. V první fazi pro vstupní složku provést prejmenování/presunutí
+dle jednoduchého filtru do výstupní složky
+
+Soubor
+Slozka - tohle neni dulezite, bude promenna
+Filtr
+Akce/Operace
+
+Soubor
+- zna svoje umisteni/cestu
+- zna svuj nazev
+At to nejsou metody ale nejakej pattern:
+(Abstract Factory? - generuje Akci)
+Copy
+Move
+Rename
+
+Filtr
+- umi provest transforamci nazvu na vstupnim stringu
+- vystupem bude novy string ...?
+- regex, whitelist, blacklist znaku
+string output = Transform(string input)
+
+Akce/Operace
+- umi provestr operaci nad souborem ... ? vstupni parametry?
+- kopirovani - soubor, vystupni cesta
+- presun - soubor, vystupni cesta
+- prejmenovani, soubor, vystupni cesta
+    ... > filtr provedem predem a cesta konstruovana predem
+    
+
+    

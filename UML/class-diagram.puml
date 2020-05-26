@@ -1,0 +1,90 @@
+@startuml
+left to right direction
+
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Aqua-CadetBlue
+
+title Class diagram
+
+
+
+package model.filters {
+
+interface Filter {
+    +filter(String input): String
+    +addFilter(String filter): void
+    +optionallyReplaceFilteredStringsWith(String replaceWith): void
+    +optionallySqueezeConsecutiveFilteredStringsIntoOne(String squeezeInto): void
+}
+
+class FileNameFilter implements Filter
+class RegexFilter implements Filter
+class WhitelistFilter implements Filter
+class BlacklistFilter implements Filter
+}
+
+package model.strings {
+    class StringUtilityOperations {
+        +squeezeEverything(String input): String
+        +squeezeWhat(String input, char squeezeWhat): String
+        +squeezeWhatRegex(String input, Pattern regexWhat): String
+        +replaceWhatTo(String input, String replaceWhat, String replaceTo): void
+        +replaceWhatRegexTo(String input, Pattern regexWhat, String replaceTo): void
+    }
+
+    abstract class StringSqueeze {
+        +squeeze(String input): String
+        -performSqueeze(String input): void
+        #{abstract}shouldAppendChar(char currentChar, char lastAppendedChar): boolean
+    }
+
+    class SqueezeEverything {
+        #char currentChar
+        #char lastAppendedChar
+
+        #shouldAppendChar(char, char): boolean
+        #thisCharIsRelevantForSqueezing(char): boolean
+    }
+
+    class SqueezeSpecificCharOnly {
+        -char squeezeWhat
+        +SqueezeSpecificCharOnly(char squeezeWhat)
+        #thisCharIsRelevantForSqueezing(char): boolean
+    }
+
+    class SqueezeSpecificCharRegexOnly {
+        -Pattern squeezeRegexWhat
+        +SqueezeSpecificCharOnly(Pattern squeezeRegexWhat)
+        #thisCharIsRelevantForSqueezing(char): boolean
+    }
+
+    StringSqueeze <|-- SqueezeEverything : Template\nmethod
+    SqueezeEverything <|-- SqueezeSpecificCharOnly : Template\nmethod
+    SqueezeEverything <|-- SqueezeSpecificCharRegexOnly : Template\nmethod
+
+
+}
+
+package model.operations {
+
+interface FileOperation {
+    +perform(Path inputFile, Path outputPath) throws OperationException
+}
+
+enum FileOperationEnum {
+    RENAME,
+    COPY,
+    MOVE,
+    DELETE
+}
+
+class RenameOperation implements FileOperation
+class CopyOperation implements FileOperation
+class MoveOperation implements FileOperation
+class DeleteOperation implements FileOperation
+
+}
+
+@enduml
