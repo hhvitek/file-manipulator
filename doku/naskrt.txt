@@ -33,5 +33,33 @@ Akce/Operace
 - prejmenovani, soubor, vystupni cesta
     ... > filtr provedem predem a cesta konstruovana predem
     
+Filtry:
 
+interface Filter.filter(String input)
+
+DELETE
+    filter(input)
+    add(pattern)
+    add(char)
+    setBlacklist(bool)
+    setWhitelist(bool)
     
+REPLACE
+    filter(input)
+    add(pattern)
+    add(char)
+    setBlacklist(bool)
+    setWhitelist(bool)
+    setReplaceWith(String)
+    
+SQUEEZE
+    filter(input)
+    add(pattern)
+    add(char)
+    setSqueezeWhat(String)
+    setSqueezeWith(String)
+    
+TO_UPPERCASE
+    filter(input)
+
+

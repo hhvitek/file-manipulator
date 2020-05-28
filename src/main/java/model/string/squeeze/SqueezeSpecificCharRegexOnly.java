@@ -1,4 +1,4 @@
-package model.string;
+package model.string.squeeze;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
  * squeeze: [aB]
  * Output: aXbbBcCCC
  */
-public class SqueezeSpecificCharRegexOnly extends SqueezeEverything {
+public class SqueezeSpecificCharRegexOnly extends StringSqueeze {
 
-    private Pattern squeezeRegexWhat;
+    private final Pattern squeezeRegexWhat;
 
     public SqueezeSpecificCharRegexOnly(@NotNull Pattern squeezeRegexWhat) {
         super();
@@ -23,9 +23,9 @@ public class SqueezeSpecificCharRegexOnly extends SqueezeEverything {
     }
 
     @Override
-    protected boolean thisCharIsRelevantForSqueezing(char c) {
-        Matcher m = squeezeRegexWhat.matcher(String.valueOf(c));
-        return m.matches();
+    protected boolean isThisCharRelevantForSqueezing(char c) {
+        Matcher matcher = squeezeRegexWhat.matcher(String.valueOf(c));
+        return matcher.matches();
     }
 
 

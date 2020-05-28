@@ -14,7 +14,7 @@ package model.filters {
 
 interface Filter {
     +filter(String input): String
-    +addFilter(String filter): void
+    +addNextFilter(String filter): void
     +optionallyReplaceFilteredStringsWith(String replaceWith): void
     +optionallySqueezeConsecutiveFilteredStringsIntoOne(String squeezeInto): void
 }
@@ -35,16 +35,15 @@ package model.strings {
     }
 
     abstract class StringSqueeze {
+        #currentChar
+        #lastAppendedChar
+
         +squeeze(String input): String
         -performSqueeze(String input): void
-        #{abstract}shouldAppendChar(char currentChar, char lastAppendedChar): boolean
+        #{abstract}thisCharIsRelevantForSqueezing(char): boolean
     }
 
     class SqueezeEverything {
-        #char currentChar
-        #char lastAppendedChar
-
-        #shouldAppendChar(char, char): boolean
         #thisCharIsRelevantForSqueezing(char): boolean
     }
 
@@ -61,8 +60,8 @@ package model.strings {
     }
 
     StringSqueeze <|-- SqueezeEverything : Template\nmethod
-    SqueezeEverything <|-- SqueezeSpecificCharOnly : Template\nmethod
-    SqueezeEverything <|-- SqueezeSpecificCharRegexOnly : Template\nmethod
+    StringSqueeze <|-- SqueezeSpecificCharOnly : Template\nmethod
+    StringSqueeze <|-- SqueezeSpecificCharRegexOnly : Template\nmethod
 
 
 }

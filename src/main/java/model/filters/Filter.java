@@ -13,10 +13,15 @@ public interface Filter {
     /**
      * Filters are applied one by one. In order of addition.
      */
-    void addNextFilter(@NotNull String nextFilter);
+    Filter addNextFilter(@NotNull String nextFilter);
+
+    /**
+     * Replace instead of deletion.
+     */
+    void optionallyReplaceFilteredStringsWith(@NotNull String replaceWith);
 
     /**
      * Behaves same as "tr -s" command. Squeezes filtered string into only one string.
      */
-    void optionallySqueezeFilteredStringsInto(@NotNull String squeezeInto);
+    void optionallyShouldSqueezeConsecutiveFilteredStrings(boolean shouldSqueeze);
 }

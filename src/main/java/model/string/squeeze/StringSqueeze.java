@@ -1,4 +1,4 @@
-package model.string;
+package model.string.squeeze;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,51 +16,49 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class StringSqueeze {
 
-    private StringBuilder output;
+    private StringBuilder outputStringBuilder;
+
+    protected char currentChar;
+    protected char lastAddedChar;
 
     protected StringSqueeze() {
     }
 
     public String squeeze(@NotNull String input) {
-        this.output = createOutputStringBuilderWithMaxPossibleSize(input);
+        outputStringBuilder = createOutputStringBuilderWithMaxPossibleSize(input);
 
-        if (inputTooSmall(input)) {
+        if (isInputTooSmall(input)) {
             return input;
         }
 
         performSqueeze(input);
 
-        return output.toString();
+        return outputStringBuilder.toString();
     }
 
     private StringBuilder createOutputStringBuilderWithMaxPossibleSize(@NotNull String input) {
         return new StringBuilder(input.length());
     }
 
-    private boolean inputTooSmall(@NotNull String input) {
-        if (input.length() < 2) {
-            return true;
-        }
-        return false;
+    private boolean isInputTooSmall(@NotNull String input) {
+        return input.length() < 2;
     }
 
     private void performSqueeze(@NotNull String input) {
         char[] inputAsChars = input.toCharArray();
 
         char theFirstCharacter = getFirstChar(inputAsChars);
-        output.append(theFirstCharacter); // always append the first character
+        outputStringBuilder.append(theFirstCharacter); // always append the first character
 
-        char lastAddedChar = theFirstCharacter;
+        lastAddedChar = theFirstCharacter;
         for (int i = 1; i < inputAsChars.length; i++) {
-            char currentChar = inputAsChars[i];
+            currentChar = inputAsChars[i];
             if (shouldAppendChar(currentChar, lastAddedChar)) {
-                output.append(currentChar);
+                outputStringBuilder.append(currentChar);
                 lastAddedChar = currentChar;
             }
         }
     }
-
-    protected abstract boolean shouldAppendChar(char currentChar, char lastAddedChar);
 
     private char getFirstChar(@NotNull char[] chars) {
         if (chars.length > 0) {
@@ -69,4 +67,15 @@ public abstract class StringSqueeze {
             return '\0';
         }
     }
+
+    private boolean shouldAppendChar(char currentChar, char lastAddedChar) {
+        return !areThoseTwoConsecutiveSqueezableCharacters();
+    }
+
+    private boolean areThoseTwoConsecutiveSqueezableCharacters() {
+        return isThisCharRelevantForSqueezing(currentChar)
+                && isThisCharRelevantForSqueezing(lastAddedChar);
+    }
+
+    protected abstract boolean isThisCharRelevantForSqueezing(char c);
 }

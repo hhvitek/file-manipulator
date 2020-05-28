@@ -1,4 +1,4 @@
-package model.string;
+package model.string.squeeze;
 
 /**
  * Squeezes only squeezable sequences of the one specific character
@@ -8,9 +8,9 @@ package model.string;
  * squeeze: 'a'
  * Output: aXbbBBBcCCC
  */
-public class SqueezeSpecificCharOnly extends SqueezeEverything {
+public class SqueezeSpecificCharOnly extends StringSqueeze {
 
-    private char squeezeWhat;
+    private final char squeezeWhat;
 
     public SqueezeSpecificCharOnly(char squeezeWhat) {
         super();
@@ -18,7 +18,7 @@ public class SqueezeSpecificCharOnly extends SqueezeEverything {
     }
 
     @Override
-    protected boolean thisCharIsRelevantForSqueezing(char c) {
+    protected boolean isThisCharRelevantForSqueezing(char c) {
         return c == squeezeWhat;
     }
 
