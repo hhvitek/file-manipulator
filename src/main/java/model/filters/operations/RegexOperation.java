@@ -6,10 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static model.filters.ErrorCode.*;
+import static model.filters.ErrorCode.ILLEGAL_FILTER_PATTERN_SYNTAX;
 
 public abstract class RegexOperation implements Filter {
 
@@ -17,10 +19,11 @@ public abstract class RegexOperation implements Filter {
 
     protected String replaceWith;
 
-    protected Pattern filteredPattern;
+    protected List<Pattern> filteredPatterns;
 
     protected RegexOperation() {
         replaceWith = "";
+        filteredPatterns = new ArrayList<>();
     }
 
     protected RegexOperation(@NotNull Pattern filteredPattern) throws FilterException {
@@ -29,22 +32,12 @@ public abstract class RegexOperation implements Filter {
     }
 
     public void addNextFilter(@NotNull Pattern additionalFilteredPattern) throws FilterException {
-        if (filteredPattern == null) {
-            filteredPattern = additionalFilteredPattern;
-        } else {
-            filteredPattern = mergeTwoPatternsUsingORPredicate(filteredPattern, additionalFilteredPattern);
-        }
+        filteredPatterns.add(additionalFilteredPattern);
     }
 
-    private Pattern mergeTwoPatternsUsingORPredicate(@NotNull Pattern firstPattern, @NotNull Pattern additionalPattern)
-            throws FilterException {
-        return compileStringRepresentationOfPattern(
-                surroundPatternWithBrackets(firstPattern)
-                        .pattern()
-                        + "|" +
-                        surroundPatternWithBrackets(additionalPattern)
-                                .pattern()
-        );
+    @Override
+    public void addNextFilter(@NotNull String nextFilter) throws FilterException {
+        addNextFilter(compileStringRepresentationOfPattern(nextFilter));
     }
 
     private Pattern compileStringRepresentationOfPattern(@NotNull String patternRepresentation) throws FilterException {
@@ -54,15 +47,6 @@ public abstract class RegexOperation implements Filter {
             logger.error("Illegal filter pattern syntax: {}", patternRepresentation);
             throw new FilterException(ILLEGAL_FILTER_PATTERN_SYNTAX, patternRepresentation);
         }
-    }
-
-    private Pattern surroundPatternWithBrackets(@NotNull Pattern input) throws FilterException {
-        return compileStringRepresentationOfPattern("(" + input.pattern() + ")");
-    }
-
-    @Override
-    public void addNextFilter(@NotNull String nextFilter) throws FilterException {
-        addNextFilter(compileStringRepresentationOfPattern(nextFilter));
     }
 
     public void replaceWith(@NotNull String replaceWith) {
@@ -76,11 +60,15 @@ public abstract class RegexOperation implements Filter {
             return input;
         }
 
-        return performOperation(input, filteredPattern);
+        String output = input;
+        for(Pattern filteredPattern: filteredPatterns) {
+            output = performOperation(output, filteredPattern);
+        }
+        return output;
     }
 
     private boolean hasAnyPattern() {
-        return (filteredPattern != null);
+        return (!filteredPatterns.isEmpty());
     }
 
     protected abstract String performOperation(@NotNull String input, @NotNull Pattern filteredPattern);
