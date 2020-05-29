@@ -1,14 +1,15 @@
-package model.filters;
+package model.filters.operations.blacklist;
 
+import model.filters.Filter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
  * Common tests that should be run by all Filter implementations....
  */
-abstract class FilterTest {
+public abstract class BlacklistFilterTest {
 
-    Filter filter;
+    protected Filter filter;
 
     @Test
     void noFilterShouldReturnInputUnchangedTest() {
@@ -49,8 +50,8 @@ abstract class FilterTest {
         final String input = "Hello World";
         final String outputExpected = "He Wrd";
 
-        filter.addNextFilter("l")
-                .addNextFilter("o");
+        filter.addNextFilter("l");
+        filter.addNextFilter("o");
 
         final String outputActual = filter.filter(input);
 
@@ -62,8 +63,8 @@ abstract class FilterTest {
         final String input = "Hello World";
         final String outputExpected = " ";
 
-        filter.addNextFilter("Hello")
-                .addNextFilter("World");
+        filter.addNextFilter("Hello");
+        filter.addNextFilter("World");
 
         final String outputActual = filter.filter(input);
 

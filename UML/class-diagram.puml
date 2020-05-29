@@ -14,9 +14,6 @@ package model.filters {
 
 interface Filter {
     +filter(String input): String
-    +addNextFilter(String filter): void
-    +optionallyReplaceFilteredStringsWith(String replaceWith): void
-    +optionallySqueezeConsecutiveFilteredStringsIntoOne(String squeezeInto): void
 }
 
 class FileNameFilter implements Filter

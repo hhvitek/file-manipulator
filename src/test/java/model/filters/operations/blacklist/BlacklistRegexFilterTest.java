@@ -1,17 +1,16 @@
-package model.filters;
+package model.filters.operations.blacklist;
 
-import model.filters.regex.RegexFilter;
+
+import model.filters.FilterException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.regex.PatternSyntaxException;
-
-public class RegexFilterTest extends FilterTest {
+public class BlacklistRegexFilterTest extends BlacklistFilterTest {
 
     @BeforeEach
     void init() {
-        filter = new RegexFilter();
+        filter = new BlacklistRegexFilter();
     }
 
     @Test
@@ -65,7 +64,7 @@ public class RegexFilterTest extends FilterTest {
         filter.addNextFilter("\\s");
 
         Assertions.assertThrows(
-                PatternSyntaxException.class,
+                FilterException.class,
                 () -> filter.addNextFilter("\\s{}")
         );
     }

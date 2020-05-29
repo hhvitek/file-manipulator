@@ -8,20 +8,6 @@ import org.jetbrains.annotations.NotNull;
  * May optionally squeeze unwanted characters into another character instead of deleting them
  */
 public interface Filter {
-    String filter(@NotNull String input);
-
-    /**
-     * Filters are applied one by one. In order of addition.
-     */
-    Filter addNextFilter(@NotNull String nextFilter);
-
-    /**
-     * Replace instead of deletion.
-     */
-    void optionallyReplaceFilteredStringsWith(@NotNull String replaceWith);
-
-    /**
-     * Behaves same as "tr -s" command. Squeezes filtered string into only one string.
-     */
-    void optionallyShouldSqueezeConsecutiveFilteredStrings(boolean shouldSqueeze);
+    @NotNull String filter(@NotNull String input);
+    void addNextFilter(@NotNull String nextFilter);
 }

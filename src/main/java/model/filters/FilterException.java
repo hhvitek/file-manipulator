@@ -2,6 +2,7 @@ package model.filters;
 
 public class FilterException extends RuntimeException {
         protected ErrorCode errorCode = ErrorCode.OK;
+        protected String errorParameter;
 
         public FilterException() {
         }
@@ -14,20 +15,21 @@ public class FilterException extends RuntimeException {
             this.errorCode = errorCode;
         }
 
-        public ErrorCode getErrorCode() {
-            return errorCode;
-        }
-
-        public void setErrorCode(ErrorCode errorCode) {
-            this.errorCode = errorCode;
+        public FilterException(ErrorCode errorCode, String errorParameter) {
+            this(errorCode);
+            this.errorParameter = errorParameter;
         }
 
         public String errorMessage() {
             switch (errorCode) {
                 case OK:
-                    return "TILT: Should not get here.";
-                case UNEXPECTED_ARGUMENT:
-                    return String.format("Argument -%c unexpected.");
+                    return "Ok.";
+                case ILLEGAL_ARGUMENT_NOT_LEGAL_SIZE:
+                    return String.format("Argument -%s is not allowed. Should be one character long", errorParameter);
+                case ILLEGAL_FILTER_PATTERN_SYNTAX:
+                    return String.format("Filter pattern invalid: %s.", errorParameter);
+                case UNSUPPORTED_OPERATION:
+                    return String.format("This operation is not supported: %s.", errorParameter);
             }
             return "";
         }

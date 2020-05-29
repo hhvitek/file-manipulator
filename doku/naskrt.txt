@@ -41,6 +41,7 @@ DELETE
     filter(input)
     add(pattern)
     add(char)
+    add(String)
     setBlacklist(bool)
     setWhitelist(bool)
     
@@ -48,6 +49,7 @@ REPLACE
     filter(input)
     add(pattern)
     add(char)
+    add(String)
     setBlacklist(bool)
     setWhitelist(bool)
     setReplaceWith(String)
@@ -56,10 +58,44 @@ SQUEEZE
     filter(input)
     add(pattern)
     add(char)
-    setSqueezeWhat(String)
+    add(String)
     setSqueezeWith(String)
     
 TO_UPPERCASE
     filter(input)
+    
+Filtry II:
+BLACKLIST_REGEX
+    filter(input)
+    add(pattern)
+    setReplaceWith(String)
+    
+BLACKLIST_STRING
+    filter(input)
+    add(String)
+    setReplaceWith(String)
+    
+WHITELIST_REGEX
+    filter(input)
+    add(pattern)
+    setReplaceWith(String)
+    
+WHITELIST_STRING
+    filter(input)
+    add(String)
+    setReplaceWith(String)
+    
+SQUEEZE_CHAR
+    filter(input)
+    add(char)
+    
+SQUEEZE_CHAR_REGEX
+    filter(input)
+    add(pattern)
+    
+TO_UPPER
+    filter(input)
+    
+
 
 
