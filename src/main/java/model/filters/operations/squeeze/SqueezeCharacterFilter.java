@@ -8,6 +8,6 @@ public class SqueezeCharacterFilter extends CharacterOperation {
 
     @Override
     protected String performOperation(@NotNull String input, char filteredCharacter) {
-        return StringUtilityOperations.squeezeWhat(input, filteredCharacter);
+        return stringAdditionalOperations.squeezeWhat(input, filteredCharacter);
     }
 }

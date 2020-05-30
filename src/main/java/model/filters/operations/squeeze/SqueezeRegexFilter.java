@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class SqueezeRegexFilter extends RegexOperation {
     @Override
     protected String performOperation(@NotNull String input, @NotNull Pattern filteredPattern) {
-        return StringUtilityOperations.squeezeWhatRegex(input, filteredPattern);
+        return stringAdditionalOperations.squeezeWhatRegex(input, filteredPattern);
     }
 
 }

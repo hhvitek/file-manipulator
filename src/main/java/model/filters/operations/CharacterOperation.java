@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CharacterOperation implements Filter {
+public abstract class CharacterOperation extends Operation implements Filter {
 
     protected List<Character> filteredCharacters;
     protected String replaceWith;

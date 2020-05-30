@@ -97,5 +97,11 @@ TO_UPPER
     filter(input)
     
 
-
-
+Whitespace REGEX
+multiple patterns
+input supplied one by one, reuse across supplies
+regexes:
+\s
+\w
+\d
+[^(\s)|(\w)|(\d)]

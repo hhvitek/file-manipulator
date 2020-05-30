@@ -24,7 +24,7 @@ public class WhitelistRegexFilter extends RegexOperation {
 
     @Override
     protected String performOperation(@NotNull String input, @NotNull Pattern filteredPattern) {
-        return StringUtilityOperations.replaceWhatRegexTo(input, filteredPattern, replaceWith);
+        return stringAdditionalOperations.replaceWhatRegexTo(input, filteredPattern, replaceWith);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.regex.PatternSyntaxException;
 
 import static model.filters.ErrorCode.ILLEGAL_FILTER_PATTERN_SYNTAX;
 
-public abstract class RegexOperation implements Filter {
+public abstract class RegexOperation extends Operation implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(RegexOperation.class);
 

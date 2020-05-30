@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 public class BlacklistCharacterFilter extends CharacterOperation {
 
     @Override
-    protected String performOperation(@NotNull String input, @NotNull char filteredCharacter) {
-        return StringUtilityOperations.replaceWhatTo(input, String.valueOf(filteredCharacter), replaceWith);
+    protected String performOperation(@NotNull String input, char filteredCharacter) {
+        return stringAdditionalOperations.replaceWhatTo(input, String.valueOf(filteredCharacter), replaceWith);
     }
 }
