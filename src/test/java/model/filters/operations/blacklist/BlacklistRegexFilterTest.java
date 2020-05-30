@@ -14,6 +14,18 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
     }
 
     @Test
+    void oneWordFilterDoesUnderstandAsWholePatternTest() {
+        final String input = "Hello World";
+        final String outputExpected = "World";
+
+        filter.addNextFilter("Hello ");
+
+        final String outputActual = filter.filter(input);
+
+        Assertions.assertEquals(outputExpected, outputActual);
+    }
+
+    @Test
     void allSpacesFilterTest() {
         final String input = "    He   l   l  o W    or    ld    ";
         final String outputExpected = "HelloWorld";
@@ -42,7 +54,7 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
     }
 
     @Test
-    void onlyTwoAndMoreConsequtiveWhitespacesFilterTest() {
+    void onlyTwoAndMoreConsecutiveWhitespacesFilterTest() {
         final String input = "    He l l o    W    or    ld    "
                 + System.lineSeparator()
                 + System.lineSeparator()

@@ -86,16 +86,6 @@ class StringUtilityOperationsTest {
     }
 
     @Test
-    void bugSqueezeLetterOFollowedBySpace() {
-        final String input = "Hello Woorldddd";
-        final String outputExpected = "Hello Worldddd";
-
-        final String outputActual = StringUtilityOperations.squeezeWhatRegex(input, Pattern.compile("o"));
-
-        Assertions.assertEquals(outputExpected, outputActual);
-    }
-
-    @Test
     @EnabledOnOs({OS.WINDOWS})
     void replaceAllWhitespacesForUnderscoreWindowsOSTest() {
         final String input = "     H   e         ll  o       Wor         l       d"

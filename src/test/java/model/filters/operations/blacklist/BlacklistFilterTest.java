@@ -34,18 +34,6 @@ public abstract class BlacklistFilterTest {
     }
 
     @Test
-    void oneWordFilterTest() {
-        final String input = "Hello World";
-        final String outputExpected = "World";
-
-        filter.addNextFilter("Hello ");
-
-        final String outputActual = filter.filter(input);
-
-        Assertions.assertEquals(outputExpected, outputActual);
-    }
-
-    @Test
     void oneLetterTwoFiltersTest() {
         final String input = "Hello World";
         final String outputExpected = "He Wrd";
