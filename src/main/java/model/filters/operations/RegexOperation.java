@@ -40,7 +40,7 @@ public abstract class RegexOperation implements Filter {
         addNextFilter(compileStringRepresentationOfPattern(nextFilter));
     }
 
-    private Pattern compileStringRepresentationOfPattern(@NotNull String patternRepresentation) throws FilterException {
+    protected Pattern compileStringRepresentationOfPattern(@NotNull String patternRepresentation) throws FilterException {
         try {
             return Pattern.compile(patternRepresentation);
         } catch (PatternSyntaxException ex) {
@@ -67,7 +67,7 @@ public abstract class RegexOperation implements Filter {
         return output;
     }
 
-    private boolean hasAnyPattern() {
+    protected boolean hasAnyPattern() {
         return (!filteredPatterns.isEmpty());
     }
 
