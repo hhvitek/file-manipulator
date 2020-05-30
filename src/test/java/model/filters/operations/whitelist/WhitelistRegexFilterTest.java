@@ -8,7 +8,7 @@ class WhitelistRegexFilterTest extends WhitelistFilterTest {
 
     @BeforeEach
     void init() {
-        filter = new WhitelistRegexFilter();
+        operation = new WhitelistRegexFilter();
     }
 
     @Test
@@ -22,9 +22,9 @@ class WhitelistRegexFilterTest extends WhitelistFilterTest {
                 + System.lineSeparator()
                 + "\t\t\t\t";
 
-        filter.addNextFilter("\\s");
+        operation.addFilter("\\s");
 
-        final String actualOutput = filter.filter(input);
+        final String actualOutput = operation.filter(input);
 
         Assertions.assertEquals(expectedOutput, actualOutput);
     }
@@ -37,9 +37,9 @@ class WhitelistRegexFilterTest extends WhitelistFilterTest {
                 + "\t\t\t\t";
         final String expectedOutput = "_HelloWorld1453_";
 
-        filter.addNextFilter("[\\w_\\d]");
+        operation.addFilter("[\\w_\\d]");
 
-        final String actualOutput = filter.filter(input);
+        final String actualOutput = operation.filter(input);
 
         Assertions.assertEquals(expectedOutput, actualOutput);
     }

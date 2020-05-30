@@ -1,26 +1,25 @@
 package model.filters.operations;
 
-import model.filters.Filter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CharacterOperation extends Operation implements Filter {
+abstract public class CharacterOperation extends Operation {
 
-    protected List<Character> filteredCharacters;
+    protected List<Character> filterCharacters;
     protected String replaceWith;
 
     protected CharacterOperation() {
-        filteredCharacters = new ArrayList<>();
+        filterCharacters = new ArrayList<>();
         replaceWith = "";
     }
 
     @Override
     public @NotNull String filter(@NotNull String input) {
         String output = input;
-        for (char filteredCharacter : filteredCharacters) {
-            output = performOperation(output, filteredCharacter);
+        for (char filterCharacter : filterCharacters) {
+            output = performOperation(output, filterCharacter);
         }
         return output;
     }
@@ -29,17 +28,17 @@ public abstract class CharacterOperation extends Operation implements Filter {
         this.replaceWith = replaceWith;
     }
 
-    public void addNextFilter(char filteredCharacter) {
-        filteredCharacters.add(filteredCharacter);
+    public void addNextFilter(char filterCharacter) {
+        filterCharacters.add(filterCharacter);
     }
 
     @Override
-    public void addNextFilter(@NotNull String filteredString) {
-        char[] filteredCharacters = filteredString.toCharArray();
-        for (char filteredCharacter : filteredCharacters) {
+    public void addFilter(@NotNull String filterCharacters) {
+        char[] filterCharactersAsCharArray = filterCharacters.toCharArray();
+        for (char filteredCharacter : filterCharactersAsCharArray) {
             addNextFilter(filteredCharacter);
         }
     }
 
-    protected abstract String performOperation(@NotNull String input, char filteredCharacter);
+    protected abstract String performOperation(@NotNull String input, char filterCharacter);
 }

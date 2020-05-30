@@ -1,19 +1,19 @@
 package model.filters.operations.squeeze;
 
-import model.filters.Filter;
+import model.filters.operations.Operation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public abstract class SqueezeFilterTest {
 
-    protected Filter filter = new SqueezeCharacterFilter();
+    protected Operation operation = new SqueezeCharacterFilter();
 
     @Test
     void noFilterShouldReturnInputUnchangedTest() {
         final String input = "Hello World";
         final String outputExpected = input;
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -23,9 +23,9 @@ public abstract class SqueezeFilterTest {
         final String input = "Hello World";
         final String outputExpected = "Helo World";
 
-        filter.addNextFilter("l");
+        operation.addFilter("l");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -39,10 +39,10 @@ public abstract class SqueezeFilterTest {
         final String input = "";
         final String outputExpected = input;
 
-        filter.addNextFilter("Hello");
-        filter.addNextFilter("World");
+        operation.addFilter("Hello");
+        operation.addFilter("World");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }

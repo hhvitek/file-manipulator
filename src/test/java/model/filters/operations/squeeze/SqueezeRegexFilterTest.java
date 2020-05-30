@@ -8,21 +8,20 @@ class SqueezeRegexFilterTest extends SqueezeFilterTest {
 
     @BeforeEach
     void init() {
-        filter = new SqueezeRegexFilter();
+        operation = new SqueezeRegexFilter();
     }
 
     //######################!!!!!!!!!
     //HOW SHOULD IT BEHAVE?
     @Test
-    void twoFiltersOneLetterFilterTest() {
+    void twoFiltersOneLetterFilter_SecondReplacesTheFirstOneTest() {
         final String input = "Hello Woorldddd";
-        final String outputExpected = "Helo Worldddd"; // --OK?
-        //final String outputExpected = "Hel Worldddd"; // --KO?
+        final String outputExpected = "Hello Worldddd";
 
-        filter.addNextFilter("l");
-        filter.addNextFilter("o");
+        operation.addFilter("l");
+        operation.addFilter("o");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -32,9 +31,9 @@ class SqueezeRegexFilterTest extends SqueezeFilterTest {
         final String input = "Hello Woorldddd";
         final String outputExpected = input;
 
-        filter.addNextFilter("lo");
+        operation.addFilter("lo");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }

@@ -8,7 +8,7 @@ class SqueezeCharacterFilterTest extends SqueezeFilterTest {
 
     @BeforeEach
     void init() {
-        filter = new SqueezeCharacterFilter();
+        operation = new SqueezeCharacterFilter();
     }
 
     @Test
@@ -16,10 +16,10 @@ class SqueezeCharacterFilterTest extends SqueezeFilterTest {
         final String input = "Hello Woorldddd";
         final String outputExpected = "Helo Worldddd";
 
-        filter.addNextFilter("l");
-        filter.addNextFilter("o");
+        operation.addFilter("l");
+        operation.addFilter("o");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -29,9 +29,9 @@ class SqueezeCharacterFilterTest extends SqueezeFilterTest {
         final String input = "Hello Woorldddd";
         final String outputExpected = "Helo Worldddd";
 
-        filter.addNextFilter("lo");
+        operation.addFilter("lo");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }

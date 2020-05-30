@@ -1,12 +1,12 @@
 package model.filters.operations.whitelist;
 
-import model.filters.Filter;
+import model.filters.operations.Operation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public abstract class WhitelistFilterTest {
 
-    protected Filter filter;
+    protected Operation operation;
 
     @Test
     void oneLetterTest() {
@@ -14,9 +14,9 @@ public abstract class WhitelistFilterTest {
         final String expectedOutput = "oo";
 
         final String filteredCharacter = "o";
-        filter.addNextFilter(filteredCharacter);
+        operation.addFilter(filteredCharacter);
 
-        final String actualOutput = filter.filter(input);
+        final String actualOutput = operation.filter(input);
 
         Assertions.assertEquals(expectedOutput, actualOutput);
     }
@@ -27,22 +27,22 @@ public abstract class WhitelistFilterTest {
         final String expectedOutput = "llool";
 
         final String filteredCharacter = "lo";
-        filter.addNextFilter(filteredCharacter);
+        operation.addFilter(filteredCharacter);
 
-        final String actualOutput = filter.filter(input);
+        final String actualOutput = operation.filter(input);
 
         Assertions.assertEquals(expectedOutput, actualOutput);
     }
 
     @Test
-    void oneLetterTwoFiltersTest() {
+    void oneLetterTwoFilters_SecondReplacesTheFirstOneTest() {
         final String input = "Hello World";
-        final String expectedOutput = "llool";
+        final String expectedOutput = "lll";
 
-        filter.addNextFilter("o");
-        filter.addNextFilter("l");
+        operation.addFilter("o");
+        operation.addFilter("l");
 
-        final String actualOutput = filter.filter(input);
+        final String actualOutput = operation.filter(input);
 
         Assertions.assertEquals(expectedOutput, actualOutput);
     }

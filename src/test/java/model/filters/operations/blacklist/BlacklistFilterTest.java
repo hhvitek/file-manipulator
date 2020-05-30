@@ -1,6 +1,6 @@
 package model.filters.operations.blacklist;
 
-import model.filters.Filter;
+import model.filters.operations.Operation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
  */
 public abstract class BlacklistFilterTest {
 
-    protected Filter filter;
+    protected Operation operation;
 
     @Test
     void noFilterShouldReturnInputUnchangedTest() {
         final String input = "Hello World";
         final String outputExpected = input;
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -26,36 +26,14 @@ public abstract class BlacklistFilterTest {
         final String input = "Hello World";
         final String outputExpected = "Heo Word";
 
-        filter.addNextFilter("l");
+        operation.addFilter("l");
 
-        final String outputActual = filter.filter(input);
-
-        Assertions.assertEquals(outputExpected, outputActual);
-    }
-
-    @Test
-    void oneLetterTwoFiltersTest() {
-        final String input = "Hello World";
-        final String outputExpected = "He Wrd";
-
-        filter.addNextFilter("l");
-        filter.addNextFilter("o");
-
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
 
-    @Test
-    void oneWordTwoFiltersTest() {
-        final String input = "Hello World";
-        final String outputExpected = " ";
 
-        filter.addNextFilter("Hello");
-        filter.addNextFilter("World");
 
-        final String outputActual = filter.filter(input);
 
-        Assertions.assertEquals(outputExpected, outputActual);
-    }
 }

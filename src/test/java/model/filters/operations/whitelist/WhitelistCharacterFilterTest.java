@@ -6,7 +6,7 @@ class WhitelistCharacterFilterTest extends WhitelistFilterTest {
 
     @BeforeEach
     void init() {
-        filter = new WhitelistCharacterFilter();
+        operation = new WhitelistCharacterFilter();
     }
 
 }

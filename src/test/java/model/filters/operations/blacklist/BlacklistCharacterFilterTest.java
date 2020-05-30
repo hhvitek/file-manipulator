@@ -8,7 +8,7 @@ class BlacklistCharacterFilterTest extends BlacklistFilterTest {
 
     @BeforeEach
     void init() {
-        filter = new BlacklistCharacterFilter();
+        operation = new BlacklistCharacterFilter();
     }
 
     @Test
@@ -16,9 +16,35 @@ class BlacklistCharacterFilterTest extends BlacklistFilterTest {
         final String input = "Hello World";
         final String outputExpected = "Wrd";
 
-        filter.addNextFilter("Hello ");
+        operation.addFilter("Hello ");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
+
+        Assertions.assertEquals(outputExpected, outputActual);
+    }
+
+    @Test
+    void oneWordTwoFiltersTest() {
+        final String input = "Hello World";
+        final String outputExpected = " ";
+
+        operation.addFilter("Hello");
+        operation.addFilter("World");
+
+        final String outputActual = operation.filter(input);
+
+        Assertions.assertEquals(outputExpected, outputActual);
+    }
+
+    @Test
+    void oneLetterTwoFiltersTest() {
+        final String input = "Hello World";
+        final String outputExpected = "He Wrd";
+
+        operation.addFilter("l");
+        operation.addFilter("o");
+
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }

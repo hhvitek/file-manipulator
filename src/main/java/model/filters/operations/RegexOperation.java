@@ -1,43 +1,39 @@
 package model.filters.operations;
 
-import model.filters.Filter;
 import model.filters.FilterException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static model.filters.ErrorCode.ILLEGAL_FILTER_PATTERN_SYNTAX;
 
-public abstract class RegexOperation extends Operation implements Filter {
+public abstract class RegexOperation extends Operation {
 
     private static final Logger logger = LoggerFactory.getLogger(RegexOperation.class);
 
     protected String replaceWith;
 
-    protected List<Pattern> filteredPatterns;
+    protected Pattern filterPattern;
 
     protected RegexOperation() {
         replaceWith = "";
-        filteredPatterns = new ArrayList<>();
     }
 
-    protected RegexOperation(@NotNull Pattern filteredPattern) throws FilterException {
+    protected RegexOperation(@NotNull Pattern filterPattern) throws FilterException {
         this();
-        addNextFilter(filteredPattern);
+        addFilter(filterPattern);
     }
 
-    public void addNextFilter(@NotNull Pattern additionalFilteredPattern) throws FilterException {
-        filteredPatterns.add(additionalFilteredPattern);
+    public void addFilter(@NotNull Pattern newFilterPattern) throws FilterException {
+        filterPattern = newFilterPattern;
     }
 
     @Override
-    public void addNextFilter(@NotNull String nextFilter) throws FilterException {
-        addNextFilter(compileStringRepresentationOfPattern(nextFilter));
+    public void addFilter(@NotNull String newFilter) throws FilterException {
+        addFilter(compileStringRepresentationOfPattern(newFilter));
     }
 
     protected Pattern compileStringRepresentationOfPattern(@NotNull String patternRepresentation) throws FilterException {
@@ -60,16 +56,12 @@ public abstract class RegexOperation extends Operation implements Filter {
             return input;
         }
 
-        String output = input;
-        for(Pattern filteredPattern: filteredPatterns) {
-            output = performOperation(output, filteredPattern);
-        }
-        return output;
+        return performOperation(input, filterPattern);
     }
 
     protected boolean hasAnyPattern() {
-        return (!filteredPatterns.isEmpty());
+        return (filterPattern != null);
     }
 
-    protected abstract String performOperation(@NotNull String input, @NotNull Pattern filteredPattern);
+    abstract protected String performOperation(@NotNull String input, @NotNull Pattern filterPattern);
 }

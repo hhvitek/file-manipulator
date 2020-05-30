@@ -14,7 +14,7 @@ public class WhitelistCharacterFilter extends CharacterOperation {
         StringBuilder outputBuilder = new StringBuilder(inputAsArray.length);
 
         for(char character: inputAsArray) {
-            if (filteredCharacters.contains(character)) {
+            if (filterCharacters.contains(character)) {
                 outputBuilder.append(character);
             }
         }
@@ -22,7 +22,7 @@ public class WhitelistCharacterFilter extends CharacterOperation {
     }
 
     @Override
-    protected String performOperation(@NotNull String input, char filteredCharacter) {
+    protected String performOperation(@NotNull String input, char filterCharacter) {
         throw new FilterException(UNSUPPORTED_OPERATION, "WhitelistCharacterFilter.performOperation()");
     }
 }

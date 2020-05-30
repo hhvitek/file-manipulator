@@ -10,7 +10,7 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
 
     @BeforeEach
     void init() {
-        filter = new BlacklistRegexFilter();
+        operation = new BlacklistRegexFilter();
     }
 
     @Test
@@ -18,9 +18,9 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
         final String input = "Hello World";
         final String outputExpected = "World";
 
-        filter.addNextFilter("Hello ");
+        operation.addFilter("Hello ");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -30,9 +30,9 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
         final String input = "    He   l   l  o W    or    ld    ";
         final String outputExpected = "HelloWorld";
 
-        filter.addNextFilter(" ");
+        operation.addFilter(" ");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -46,9 +46,9 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
                 + "\t\t\t\t\t";
         final String outputExpected = "HelloWorld";
 
-        filter.addNextFilter("\\s");
+        operation.addFilter("\\s");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -62,9 +62,9 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
                 + "\t\t\t\t\t";
         final String outputExpected = "He l l oWorld";
 
-        filter.addNextFilter("\\s{2,}");
+        operation.addFilter("\\s{2,}");
 
-        final String outputActual = filter.filter(input);
+        final String outputActual = operation.filter(input);
 
         Assertions.assertEquals(outputExpected, outputActual);
     }
@@ -73,11 +73,37 @@ public class BlacklistRegexFilterTest extends BlacklistFilterTest {
     void malformedFilterRegexThrowsPatternException() {
         final String input = "Hello World";
 
-        filter.addNextFilter("\\s");
+        operation.addFilter("\\s");
 
         Assertions.assertThrows(
                 FilterException.class,
-                () -> filter.addNextFilter("\\s{}")
+                () -> operation.addFilter("\\s{}")
         );
+    }
+
+    @Test
+    void oneWordTwoFilters_SecondFilterReplacesTheFirstOneTest() {
+        final String input = "Hello World";
+        final String outputExpected = "Hello ";
+
+        operation.addFilter("Hello");
+        operation.addFilter("World");
+
+        final String outputActual = operation.filter(input);
+
+        Assertions.assertEquals(outputExpected, outputActual);
+    }
+
+    @Test
+    void oneLetterTwoFilters_SecondFilterReplacesTheFirstOneTest() {
+        final String input = "Hello World";
+        final String outputExpected = "Hell Wrld";
+
+        operation.addFilter("l");
+        operation.addFilter("o");
+
+        final String outputActual = operation.filter(input);
+
+        Assertions.assertEquals(outputExpected, outputActual);
     }
 }
