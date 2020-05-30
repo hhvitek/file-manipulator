@@ -1,7 +1,7 @@
 Program na práci se soubory. Myšlenka jest: pro danou složku chci vyhledat
-(rekurzivne ci ne) všechny soubory vyhovující danému filtru. Následkne provést 
+(rekurzivne ci ne) všechny soubory vyhovující danému filtru. Následkne provést
 pro vybrané soubory danou akci. Napr. zkopírovat/presunout do složky výstupní.
-Nebo provést prejmenování ci prosté vypsání souboru na obrazovku. Program by mel 
+Nebo provést prejmenování ci prosté vypsání souboru na obrazovku. Program by mel
 by disajovaný na snadou rozširitelnost pro další a další nové operace se soubory.
 Rozšišitelnost pro nové filty. V první fazi pro vstupní složku provést prejmenování/presunutí
 dle jednoduchého filtru do výstupní složky
@@ -16,9 +16,10 @@ Soubor
 - zna svuj nazev
 At to nejsou metody ale nejakej pattern:
 (Abstract Factory? - generuje Akci)
-Copy
-Move
-Rename
+Copy from to
+Move from to
+Rename from to
+Delete from
 
 Filtr
 - umi provest transforamci nazvu na vstupnim stringu
@@ -32,7 +33,7 @@ Akce/Operace
 - presun - soubor, vystupni cesta
 - prejmenovani, soubor, vystupni cesta
     ... > filtr provedem predem a cesta konstruovana predem
-    
+
 Filtry:
 
 interface Filter.filter(String input)
@@ -44,7 +45,7 @@ DELETE
     add(String)
     setBlacklist(bool)
     setWhitelist(bool)
-    
+
 REPLACE
     filter(input)
     add(pattern)
@@ -53,49 +54,49 @@ REPLACE
     setBlacklist(bool)
     setWhitelist(bool)
     setReplaceWith(String)
-    
+
 SQUEEZE
     filter(input)
     add(pattern)
     add(char)
     add(String)
     setSqueezeWith(String)
-    
+
 TO_UPPERCASE
     filter(input)
-    
+
 Filtry II:
 BLACKLIST_REGEX
     filter(input)
     add(pattern)
     setReplaceWith(String)
-    
+
 BLACKLIST_STRING
     filter(input)
     add(String)
     setReplaceWith(String)
-    
+
 WHITELIST_REGEX
     filter(input)
     add(pattern)
     setReplaceWith(String)
-    
+
 WHITELIST_STRING
     filter(input)
     add(String)
     setReplaceWith(String)
-    
+
 SQUEEZE_CHAR
     filter(input)
     add(char)
-    
+
 SQUEEZE_CHAR_REGEX
     filter(input)
     add(pattern)
-    
+
 TO_UPPER
     filter(input)
-    
+
 
 Whitespace REGEX
 multiple patterns
@@ -105,3 +106,46 @@ regexes:
 \w
 \d
 [^(\s)|(\w)|(\d)]
+
+############################################################################
+UI
+############################################################################
+
+INPUTs
+* input folder
+    default execution folder
+* output folder
+    default execution folder / OUTPUT
+* file suffixes (extensions)
+    define AUDIO suffixes
+    define VIDEO suffixes
+    define AUDIO_AND_VIDEO suffixes
+    allows any custom suffixes
+    default AUDIO_AND_VIDEO
+* choose file action
+    copy, move, rename, ...
+    default copy
+
+model(Path inputFolder, Path outputFolder, List<String> suffixes, enum FileAction)
+model.setInputFolder
+model.setOutputFolder
+model.setSuffixes(List)
+model.setAction(enum)
+Observer model && getters for progress?
+
+Should present progress on file to file basis + percentage based on file count.
+
+FileNameFilterOperation
+    allows a-zA-Z0-9_-()[].
+    squeeze unfiltered into char _
+    trim _ from beginning and end
+CustomRegexFilterOperation
+    should be able to pick Operations and theirs order
+
+###
+FileNameFilterOperation
+    -whitelist regex + replace to _
+    -squeeze _ char
+    -trim _
+
+

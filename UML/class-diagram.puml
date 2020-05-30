@@ -10,16 +10,72 @@ title Class diagram
 
 
 
-package model.filters {
+package model.string_filters.operations {
 
-interface Filter {
-    +filter(String input): String
+abstract class Operation {
+    #StringAdditionalOperations ops
+    +{abstract}filter(String input): String
+    +{abstract}addFilter(String filter): void
 }
 
-class FileNameFilter implements Filter
-class RegexFilter implements Filter
-class WhitelistFilter implements Filter
-class BlacklistFilter implements Filter
+abstract class CharacterOperation extends Operation {
+    #List<Character> filterCharacters
+    +filter(String input): String
+    +replaceWith(String replaceWith)
+    +addFilter(char filterCharacter)
+    +addFilter(String filterCharacters)
+    +{abstract}performOperation(String input, char filterCharacter)
+}
+abstract class RegexOperation extends Operation {
+    #Pattern filterPattern
+    +filter(String input): String
+    +replaceWith(String replaceWith)
+    +addFilter(Pattern newFilterPattern)
+    +addFilter(String newFilterPattern)
+    +{abstract}performOperation(String input, Patter filterPattern)
+}
+abstract class ModifiedRegexOperation extends RegexOperation {
+    #Pattern modifiedFilterPattern
+    +addFilter(Pattern newPatternToBeModified)
+    #{abstract}modifyPattern(Pattern patternToBeModified)
+}
+
+class BlacklistCharacterFilter extends CharacterOperation {
+    #performOperation()
+}
+class BlacklistRegexFilter extends RegexOperation {
+    #performOperation()
+}
+
+class WhitelistCharacterFilter extends CharacterOperation {
+    +filter(String input): String
+    #performOperation() is UNSUPPORTED_OPERATION
+}
+class WhitelistRegexFilter extends ModifiedRegexOperation {
+    #modifyPattern()
+    #performOperation()
+}
+
+class SqueezeCharacterFilter extends CharacterOperation {
+    #performOperation()
+}
+class SqueezeRegexFilter extends RegexOperation {
+    #performOperation()
+}
+class TrimCharacterFilter extends CharacterOperation {
+    -String trimmingString
+    +filter(String input): String
+    #performOperation() is UNSUPPORTED_OPERATION
+    +addFilter(String)
+    +addFilter(char)
+
+}
+class TrimRegexFilter extends ModifiedRegexOperation {
+    #modifyPattern()
+    #performOperation()
+}
+
+class FileNameFilterOperation extends Operation
 }
 
 package model.strings {
@@ -63,10 +119,13 @@ package model.strings {
 
 }
 
-package model.operations {
+package model.file_operations {
 
 interface FileOperation {
-    +perform(Path inputFile, Path outputPath) throws OperationException
+    +copy(Path what, Path to) throws IOException
+    +rename(Path what, String newName) throws IOException
+    +move(Path what, Path to) throws IOException
+    +delete(Path what) throws IOException
 }
 
 enum FileOperationEnum {
@@ -76,10 +135,7 @@ enum FileOperationEnum {
     DELETE
 }
 
-class RenameOperation implements FileOperation
-class CopyOperation implements FileOperation
-class MoveOperation implements FileOperation
-class DeleteOperation implements FileOperation
+class FileOperationImpl implements FileOperation
 
 }
 
