@@ -24,7 +24,7 @@ abstract class CharacterOperation extends Operation {
     +replaceWith(String replaceWith)
     +addFilter(char filterCharacter)
     +addFilter(String filterCharacters)
-    +{abstract}performOperation(String input, char filterCharacter)
+    #{abstract}performOperation(String input, char filterCharacter)
 }
 abstract class RegexOperation extends Operation {
     #Pattern filterPattern
@@ -32,7 +32,7 @@ abstract class RegexOperation extends Operation {
     +replaceWith(String replaceWith)
     +addFilter(Pattern newFilterPattern)
     +addFilter(String newFilterPattern)
-    +{abstract}performOperation(String input, Patter filterPattern)
+    #{abstract}performOperation(String input, Patter filterPattern)
 }
 abstract class ModifiedRegexOperation extends RegexOperation {
     #Pattern modifiedFilterPattern

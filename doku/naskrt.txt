@@ -126,6 +126,11 @@ INPUTs
     copy, move, rename, ...
     default copy
 
+
+
+############################################################################
+
+MODEL
 model(Path inputFolder, Path outputFolder, List<String> suffixes, enum FileAction)
 model.setInputFolder
 model.setOutputFolder
@@ -148,4 +153,32 @@ FileNameFilterOperation
     -squeeze _ char
     -trim _
 
+DATA
+staticData - inputFolder, outputFolder, suffixes, isRunning
+suffixes - current, predefined list
+suffix je String - vic suffixu tvori seznam/List - cele se nazyva kategorie treba AUDIO (mp3, mpa, ...)
 
+jobData - filesToProcess, filesAlreadyProcessed
+
+Map<String, List<String>
+nebo
+SuffixCategory
+    Category()
+    Category(List<String>)
+    Category(delimitedString, delimiter)
+    --
+    List<String> suffixes
+    String name
+    --
+    addSuffix(String)
+    addSuffixes(List<String>)
+    addSuffixes(delimitedString, delimiter)
+
+    iterator item is String
+    getSuffixesSize()
+    getSuffixesAsList()
+    getSuffixesAsDelimitedString(delimiter)
+
+Suffix
+    Suffix(String)
+    toString()
