@@ -1,0 +1,59 @@
+@startuml
+
+left to right direction
+
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Aqua-CadetBlue
+
+title Model class diagram
+
+interface IModel {
+    +setInputFolder(Path newInputFolder): void
+    +getInputFolder(): Path
+
+    +setOutputFolder(Path newOutputFolder): void
+    +getOutputFolder(): Path
+
+    +setFileSuffixes(ISuffixesCategory newSuffixes): void
+    +getFileSuffixes(): ISuffixesCategory
+
+    +createJobWithDefaultParameters(): IJob
+    +createJob(Path, Path, ISuffixesCategory): IJob
+    +getJobs(): List<IJob>
+    +getJobById(int jobId)
+
+    +getPredefinedFileSuffixesCategories(): SimpleModelSuffixesCategoriesDb
+    +addNewPredefinedFileSuffixesCategory(ISuffixesCategory newPredefinedSuffixesCategory): void
+    +getPredefinesFileSuffixesByCategoryName(String categoryName): Optional<ISuffixesCategory>
+}
+
+interface IPredefinedSuffixes
+
+interface IJobManager {
+    +createJob(Path, Path, ISuffixesCategory): IJob
+    +getJobs(): List<IJob>
+    +getJobById(int jobId)
+}
+
+
+interface IJob {
+    +getId(): int
+    +isRunning(): boolean
+    +getInputFolder(): Path
+    +getOutputFolder(): Path
+    +getSuffixes(): ISuffixesCategory
+    +getOverallFileCount(): void
+    +getProcessedFileCount(): void
+    +getRemainingFileCount(): void
+    +getProcessedFiles(): List<Path>
+    +performOperation(List<Path> foundFiles) throws IOException
+    +getFoundFiles(): List<Path>
+}
+
+
+interface IController
+interface IView
+
+@enduml

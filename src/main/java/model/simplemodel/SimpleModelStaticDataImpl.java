@@ -1,5 +1,8 @@
-package model;
+package model.simplemodel;
 
+import model.IModelStaticData;
+import model.IPredefinedSuffixesLoader;
+import model.ISuffixesCollection;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -13,7 +16,7 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
     private Path inputFolder;
     private Path outputFolder;
     private SimpleModelSuffixesCategoriesDb categoriesDb;
-    private ISuffixesCategory currentSuffixes;
+    private ISuffixesCollection currentSuffixes;
 
     public SimpleModelStaticDataImpl() {
         inputFolder = getCurrentWorkingFolder();
@@ -33,12 +36,10 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
     }
 
     private void initializeCurrentSuffixes() {
-        if (categoriesDb.size() > 0) {
-            currentSuffixes = categoriesDb.iterator().next();
-        } else {
-            currentSuffixes = new SimpleModelSuffixesCategoryImpl();
-        }
+        currentSuffixes = categoriesDb.getFirstSuffixesCategory();
     }
+
+
 
     @Override
     public void setInputFolder(@NotNull Path newInputFolder) {
@@ -61,12 +62,12 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
     }
 
     @Override
-    public void setFileSuffixes(ISuffixesCategory newSuffixes) {
+    public void setFileSuffixes(ISuffixesCollection newSuffixes) {
         currentSuffixes = newSuffixes;
     }
 
     @Override
-    public ISuffixesCategory getFileSuffixes() {
+    public ISuffixesCollection getFileSuffixes() {
         return currentSuffixes;
     }
 
@@ -76,12 +77,12 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
     }
 
     @Override
-    public void addNewPredefinedFileSuffixesCategory(ISuffixesCategory newPredefinedSuffixesCategories) {
+    public void addNewPredefinedFileSuffixesCategory(ISuffixesCollection newPredefinedSuffixesCategories) {
         categoriesDb.addNewPredefinedFileSuffixesCategory(newPredefinedSuffixesCategories);
     }
 
     @Override
-    public Optional<ISuffixesCategory> getPredefinesFileSuffixesByCategoryName(String categoryName) {
+    public Optional<ISuffixesCollection> getPredefinesFileSuffixesByCategoryName(String categoryName) {
         return categoriesDb.getPredefinesFileSuffixesByCategoryName(categoryName);
     }
 }

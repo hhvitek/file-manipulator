@@ -12,7 +12,7 @@ public class MainFormUtility {
 
     public JFrame createMainForm() {
         mainForm = new JFrame("Main Frame");
-        mainForm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mainForm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setCenteredToGoldenRatio(mainForm);
         return mainForm;
     }

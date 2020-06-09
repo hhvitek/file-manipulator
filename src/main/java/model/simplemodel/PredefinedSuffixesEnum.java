@@ -1,21 +1,23 @@
-package model;
+package model.simplemodel;
+
+import model.ISuffixesCollection;
 
 public enum PredefinedSuffixesEnum {
     AUDIO {
         @Override
-        public ISuffixesCategory getSuffixes() {
+        public ISuffixesCollection getSuffixes() {
             return createSuffixesCategory(name(), Constants.audioSuffixes);
         }
     },
     VIDEO {
         @Override
-        public ISuffixesCategory getSuffixes() {
+        public ISuffixesCollection getSuffixes() {
             return createSuffixesCategory(name(), Constants.videoSuffixes);
         }
     },
     AUDIO_AND_VIDEO {
         @Override
-        public ISuffixesCategory getSuffixes() {
+        public ISuffixesCollection getSuffixes() {
             String combinedAudioAndVideo = Constants.audioSuffixes + "," + Constants.videoSuffixes;
             return createSuffixesCategory("AUDIO_AND_VIDEO", combinedAudioAndVideo);
         }
@@ -26,13 +28,13 @@ public enum PredefinedSuffixesEnum {
         static String videoSuffixes = "avi,mp4";
     }
 
-    protected ISuffixesCategory createSuffixesCategory(String categoryName, String delimitedSuffixes) {
-        ISuffixesCategory category = new SimpleModelSuffixesCategoryImpl(categoryName);
+    protected ISuffixesCollection createSuffixesCategory(String categoryName, String delimitedSuffixes) {
+        ISuffixesCollection category = new SimpleModelSuffixesCollectionImpl(categoryName);
         category.addSuffixes(delimitedSuffixes, ",");
         return category;
     }
 
-    abstract public ISuffixesCategory getSuffixes();
+    abstract public ISuffixesCollection getSuffixes();
 
 
 }

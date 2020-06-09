@@ -2,14 +2,16 @@ package model;
 
 import java.util.List;
 
-public interface ISuffixesCategory extends Iterable<String> {
+public interface ISuffixesCollection extends Iterable<String> {
 
     void addSuffix(String suffix);
     void addSuffixes(List<String> suffixes);
-    void addSuffixes(String delimitedSuffixes, String delimiterRegex);
+    void addSuffixes(String delimitedSuffixes, String delimiter);
     String getCategoryName();
     boolean isNamed();
 
     String getSuffixesAsDelimitedString(String delimiter);
+    String[] getSuffixesAsStrArray();
+    String getGlobRegexFromSuffixes();
     int getSuffixesSize();
 }

@@ -1,7 +1,7 @@
 import controller.IController;
 import controller.SimpleController;
 import model.IModel;
-import model.SimpleModel;
+import model.simplemodel.SimpleModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.IView;

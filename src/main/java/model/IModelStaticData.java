@@ -1,5 +1,6 @@
 package model;
 
+import model.simplemodel.SimpleModelSuffixesCategoriesDb;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -13,9 +14,9 @@ public interface IModelStaticData {
     void setOutputFolder(@NotNull Path newOutputFolder);
     @NotNull Path getOutputFolder();
 
-    void setFileSuffixes(ISuffixesCategory newSuffixes);
-    ISuffixesCategory getFileSuffixes();
+    void setFileSuffixes(ISuffixesCollection newSuffixes);
+    ISuffixesCollection getFileSuffixes();
     SimpleModelSuffixesCategoriesDb getPredefinedFileSuffixesCategories();
-    void addNewPredefinedFileSuffixesCategory(ISuffixesCategory newPredefinedSuffixesCategory);
-    Optional<ISuffixesCategory> getPredefinesFileSuffixesByCategoryName(String categoryName);
+    void addNewPredefinedFileSuffixesCategory(ISuffixesCollection newPredefinedSuffixesCategory);
+    Optional<ISuffixesCollection> getPredefinesFileSuffixesByCategoryName(String categoryName);
 }

@@ -1,14 +1,16 @@
 package view;
 
-import model.ISuffixesCategory;
+import model.ISuffixesCollection;
 import model.observer.IObserver;
 
 import java.nio.file.Path;
 
 public interface IView extends IObserver {
     void createView();
-    void setSuffixes(ISuffixesCategory suffixes);
+    void destroyView();
+    void setSuffixes(ISuffixesCollection suffixes);
     void setInputFolder(Path inputFolder);
     void setOutputFolder(Path outputFolder);
+    void setStatusBar(String message);
     void errorOccurred(String errorMessage);
 }

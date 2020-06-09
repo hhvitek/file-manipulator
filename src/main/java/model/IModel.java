@@ -1,13 +1,35 @@
 package model;
 
-import model.file_operations.FileOperationEnum;
 import model.observer.IObservable;
+import model.simplemodel.SimpleModelSuffixesCategoriesDb;
+import org.jetbrains.annotations.NotNull;
 
-public interface IModel extends IObservable, IModelStaticData {
-    void setFileOperation(FileOperationEnum fileOperation);
-    FileOperationEnum getFileOperation();
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
-    void getCurrentStatusObject();
-    void start();
-    void stop();
+public interface IModel extends IObservable {
+    void setInputFolder(@NotNull Path newInputFolder);
+    @NotNull Path getInputFolder();
+
+    void setOutputFolder(@NotNull Path newOutputFolder);
+    @NotNull Path getOutputFolder();
+
+    void setSuffixes(ISuffixesCollection newSuffixes);
+    ISuffixesCollection getSuffixes();
+
+    List<String> getSupportedOperationNames();
+    void setOperation(String operationName) throws IllegalArgumentException;
+
+    int createJob(Path inputFolder, Path outputFolder, ISuffixesCollection suffixes);
+    int createJobWithDefaultParameters();
+
+    Optional<IJob> getJobDetails(int jobId);
+    void stopJob(int jobId);
+    void stopAll();
+    void startJobInParallel(int jobId);
+
+    SimpleModelSuffixesCategoriesDb getPredefinedFileSuffixesCategories();
+    void addNewPredefinedFileSuffixesCategory(ISuffixesCollection newPredefinedSuffixesCategory);
+    Optional<ISuffixesCollection> getPredefinesFileSuffixesByCategoryName(String categoryName);
 }

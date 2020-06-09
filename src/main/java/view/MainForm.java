@@ -2,7 +2,7 @@ package view;
 
 import controller.IController;
 import model.IModel;
-import model.ISuffixesCategory;
+import model.ISuffixesCollection;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,16 +31,17 @@ public class MainForm {
     private JLabel labelStatusBarStatusText;
     private JLabel labelStatusBarCopyright;
     private JPanel panelIntermediateActions;
-    private JButton buttonCountAudioFiles;
-    private JPanel panelExtensions;
-    private JTextField textFieldAudioExtensions;
-    private JButton buttonSetAudioExtensions;
-    private JButton buttonValidate;
-    private JComboBox comboBoxChoosePredefinedAudioExtensions;
+    private JButton buttonStore;
+    private JPanel panelSuffixes;
+    private JTextField textFieldFileSuffixes;
+    private JButton buttonLoad;
+    private JComboBox comboBoxChoosePredefinedFileSuffixes;
+    private JPanel panelOperations;
+    private JComboBox comboBoxFileOperations;
 
 
     //################CUSTOM VARIABLES
-    private static final String SUFFIXES_DELIMITER_REGEX = "\\*s,\\s*";
+    private static final String SUFFIXES_DELIMITER = ",";
     private static final String SUFFIXES_JOINER_STRING = ", ";
 
     private final MainFormUtility mainFormUtility = new MainFormUtility();
@@ -69,7 +70,7 @@ public class MainForm {
             public void actionPerformed(ActionEvent actionEvent) {
                 Optional<Path> optionalFile = mainFormUtility.showFileChooserAndGetFolder(model.getInputFolder());
                 optionalFile.ifPresent(
-                        file -> newInputFolderChosenByUser(optionalFile.get())
+                        file -> newInputFolderChosenByUser(optionalFile.get().toString())
                 );
             }
         });
@@ -78,61 +79,53 @@ public class MainForm {
             public void actionPerformed(ActionEvent actionEvent) {
                 Optional<Path> optionalFile = mainFormUtility.showFileChooserAndGetFolder(model.getOutputFolder());
                 if (optionalFile.isPresent()) {
-                    newOutputFolderChosenByUser(optionalFile.get());
+                    newOutputFolderChosenByUser(optionalFile.get().toString());
                 }
             }
         });
         buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                loadAllAndUpdateFromModel();
+                controller.createJob();
             }
         });
         buttonCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                controller.stopAll();
             }
         });
         buttonExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                controller.exitApplication();
             }
         });
-        buttonValidate.addActionListener(new ActionListener() {
+        buttonLoad.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                updateAllFields();
-                //String validateText = model.validate();
-                //JOptionPane.showMessageDialog(swingFrame, validateText, "Validation result", JOptionPane.PLAIN_MESSAGE);
-                setStatusBarMessage("Validation Performed.");
+                loadAllAndUpdateFromModel();
+                setStatusBarMessage("All files updated from model.");
             }
         });
-        buttonCountAudioFiles.addActionListener(new ActionListener() {
+        buttonStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                updateAllFields();
-                //int count = model.countRelevantAudioFiles();
-                //setStatusBarMessage("There are around: " + count + " audio files.");
+                storeAllToModel();
+                setStatusBarMessage("Stored successfully");
             }
         });
-        buttonSetAudioExtensions.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                newSuffixesChosenByUser(textFieldAudioExtensions.getText());
-            }
-        });
-        buttonStart.addActionListener(new ActionListener() {
+        comboBoxChoosePredefinedFileSuffixes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setStatusBarMessage("Mission started!");
+                newPredefinedSuffixesChosenByUser(comboBoxChoosePredefinedFileSuffixes.getSelectedItem().toString());
             }
         });
-        comboBoxChoosePredefinedAudioExtensions.addActionListener(new ActionListener() {
+        comboBoxFileOperations.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                newPredefinedSuffixesChosenByUser(comboBoxChoosePredefinedAudioExtensions.getSelectedItem().toString());
+                newFileOperationChosenByUser(comboBoxFileOperations.getSelectedItem().toString());
             }
         });
     }
@@ -144,43 +137,59 @@ public class MainForm {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                setDefaultState();
+                loadAllAndUpdateFromModel();
+                fillPredefinedSuffixes();
+                fillSupportedFileOperations();
 
                 swingFrame.pack();
                 swingFrame.setVisible(true);
-
             }
         });
     }
 
-    private void setStatusBarMessage(String message) {
+    /**
+     * Stops UI of the application
+     */
+    public void stopSwingApplication() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                swingFrame.setVisible(false);
+                swingFrame.dispose();
+            }
+        });
+    }
+
+    public void setStatusBarMessage(String message) {
         labelStatusBarStatusText.setText(message);
     }
 
-    private void newInputFolderChosenByUser(Path newInputFolder) {
-        controller.newInputFolderChosenByUser(newInputFolder);
+    private void newInputFolderChosenByUser(String newInputFolder) {
+        controller.newInputFolderChosenByUser(newInputFolder.toString());
     }
 
-    private void newOutputFolderChosenByUser(Path newOutputFolder) {
-        controller.newOutputFolderChosenByUser(newOutputFolder);
+    private void newOutputFolderChosenByUser(String newOutputFolder) {
+        controller.newOutputFolderChosenByUser(newOutputFolder.toString());
     }
 
     private void newSuffixesChosenByUser(String newSuffixes) {
-        ISuffixesCategory suffixes = new ViewSuffixesCategoryImplSimple();
-        suffixes.addSuffixes(newSuffixes, SUFFIXES_DELIMITER_REGEX);
-        controller.newSuffixesChosenByUser(suffixes);
+        controller.newSuffixesChosenByUser(newSuffixes, SUFFIXES_DELIMITER);
     }
 
     private void newPredefinedSuffixesChosenByUser(String newSuffixesCategoryName) {
         controller.newPredefinedSuffixesChosenByUser(newSuffixesCategoryName);
     }
 
+    private void newFileOperationChosenByUser(String operationName) {
+        controller.newFileOperationChosenByUser(operationName);
+    }
+
     private void setFolder(JTextField folderTextField, Path newFolder) {
         folderTextField.setText(newFolder.toString());
     }
 
-    public void setAudioExtensions(ISuffixesCategory suffixes) {
-        textFieldAudioExtensions.setText(
+    public void setSuffixes(ISuffixesCollection suffixes) {
+        textFieldFileSuffixes.setText(
                 suffixes.getSuffixesAsDelimitedString(SUFFIXES_JOINER_STRING)
         );
     }
@@ -194,24 +203,29 @@ public class MainForm {
     }
 
     private void fillPredefinedSuffixes() {
-        for(ISuffixesCategory predefinedCategory: model.getPredefinedFileSuffixesCategories()) {
-            comboBoxChoosePredefinedAudioExtensions.addItem(
+        for(ISuffixesCollection predefinedCategory: model.getPredefinedFileSuffixesCategories()) {
+            comboBoxChoosePredefinedFileSuffixes.addItem(
                     predefinedCategory.getCategoryName()
             );
         }
     }
 
-    private void updateAllFields() {
-        setInputFolder(model.getInputFolder());
-        setOutputFolder(model.getOutputFolder());
-        setAudioExtensions(model.getFileSuffixes());
-        fillPredefinedSuffixes();
+    private void fillSupportedFileOperations() {
+        for(String operationName: model.getSupportedOperationNames()) {
+            comboBoxFileOperations.addItem(operationName);
+        }
     }
 
-    /**
-     * Sets App to default state
-     */
-    private void setDefaultState() {
-        updateAllFields();
+    private void loadAllAndUpdateFromModel() {
+        setInputFolder(model.getInputFolder());
+        setOutputFolder(model.getOutputFolder());
+        setSuffixes(model.getSuffixes());
+    }
+
+    private void storeAllToModel() {
+        newInputFolderChosenByUser(textFieldInputFolder.getText());
+        newOutputFolderChosenByUser(textFieldOutputFolder.getText());
+        newFileOperationChosenByUser(comboBoxFileOperations.getSelectedItem().toString());
+        newSuffixesChosenByUser(textFieldFileSuffixes.getText());
     }
 }

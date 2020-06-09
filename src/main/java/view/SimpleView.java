@@ -2,7 +2,7 @@ package view;
 
 import controller.IController;
 import model.IModel;
-import model.ISuffixesCategory;
+import model.ISuffixesCollection;
 
 import java.nio.file.Path;
 
@@ -21,8 +21,13 @@ public class SimpleView implements IView {
     }
 
     @Override
-    public void setSuffixes(ISuffixesCategory suffixes) {
-        form.setAudioExtensions(suffixes);
+    public void destroyView() {
+        form.stopSwingApplication();
+    }
+
+    @Override
+    public void setSuffixes(ISuffixesCollection suffixes) {
+        form.setSuffixes(suffixes);
     }
 
     @Override
@@ -36,8 +41,13 @@ public class SimpleView implements IView {
     }
 
     @Override
-    public void errorOccurred(String errorMessage) {
+    public void setStatusBar(String message) {
+        form.setStatusBarMessage(message);
+    }
 
+    @Override
+    public void errorOccurred(String errorMessage) {
+        setStatusBar("ERROR: <" + errorMessage + ">");
     }
 
     @Override
