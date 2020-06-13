@@ -15,31 +15,29 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
 
     private Path inputFolder;
     private Path outputFolder;
-    private SimpleModelSuffixesCategoriesDb categoriesDb;
-    private ISuffixesCollection currentSuffixes;
+    private SimpleModelSuffixesDb suffixesDb;
+    private ISuffixesCollection currentSuffixesCollection;
 
     public SimpleModelStaticDataImpl() {
         inputFolder = getCurrentWorkingFolder();
         outputFolder = inputFolder.resolve(DEFAULT_OUTPUT_FOLDER_NAME);
-        initializePredefinedSuffixes();
+        initializeSuffixesDb();
         initializeCurrentSuffixes();
     }
 
-    private Path getCurrentWorkingFolder() {
+    private static Path getCurrentWorkingFolder() {
         String userDirProperty = System.getProperty("user.dir");
         return Paths.get(userDirProperty);
     }
 
-    private void initializePredefinedSuffixes() {
+    private void initializeSuffixesDb() {
         IPredefinedSuffixesLoader loader = new SimpleModelPredefinesSuffixesLoaderImpl();
-        categoriesDb = loader.load();
+        suffixesDb = loader.load();
     }
 
     private void initializeCurrentSuffixes() {
-        currentSuffixes = categoriesDb.getFirstSuffixesCategory();
+        currentSuffixesCollection = suffixesDb.getFirstSuffixesCollection();
     }
-
-
 
     @Override
     public void setInputFolder(@NotNull Path newInputFolder) {
@@ -62,27 +60,27 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
     }
 
     @Override
-    public void setFileSuffixes(ISuffixesCollection newSuffixes) {
-        currentSuffixes = newSuffixes;
+    public void setCurrentSuffixesCollection(ISuffixesCollection newSuffixesCollection) {
+        currentSuffixesCollection = newSuffixesCollection;
     }
 
     @Override
-    public ISuffixesCollection getFileSuffixes() {
-        return currentSuffixes;
+    public ISuffixesCollection getCurrentSuffixesCollection() {
+        return currentSuffixesCollection;
     }
 
     @Override
-    public SimpleModelSuffixesCategoriesDb getPredefinedFileSuffixesCategories() {
-        return categoriesDb;
+    public SimpleModelSuffixesDb getSuffixesDb() {
+        return suffixesDb;
     }
 
     @Override
-    public void addNewPredefinedFileSuffixesCategory(ISuffixesCollection newPredefinedSuffixesCategories) {
-        categoriesDb.addNewPredefinedFileSuffixesCategory(newPredefinedSuffixesCategories);
+    public void addNewPredefinedSuffixesCollection(ISuffixesCollection newPredefinedSuffixesCollection) {
+        suffixesDb.addNewSuffixesCollection(newPredefinedSuffixesCollection);
     }
 
     @Override
-    public Optional<ISuffixesCollection> getPredefinesFileSuffixesByCategoryName(String categoryName) {
-        return categoriesDb.getPredefinesFileSuffixesByCategoryName(categoryName);
+    public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(String name) {
+        return suffixesDb.getSuffixesCollectionByName(name);
     }
 }

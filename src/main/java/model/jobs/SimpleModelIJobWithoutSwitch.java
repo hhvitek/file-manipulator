@@ -14,12 +14,13 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleModelIJobWithoutSwitch implements IJob {
 
-    private static final Logger logger = LoggerFactory.getLogger(SimpleModelJob.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleModelIJobWithoutSwitch.class);
 
-    private static int autoIncrement = 0;
+    private static AtomicInteger autoIncrement;
     private static Operation operation = new FileNameFilterOperation();
     private static IFileLocator fileLocator = new FileLocatorImpl();
     private static IFileOperation fileOperation;
@@ -28,7 +29,7 @@ public class SimpleModelIJobWithoutSwitch implements IJob {
     private Path outputFolder;
     private ISuffixesCollection suffixes;
 
-    private int jobId;
+    private final int jobId;
     private boolean isRunning;
     private volatile boolean shouldStop;
 
@@ -36,8 +37,8 @@ public class SimpleModelIJobWithoutSwitch implements IJob {
         this.inputFolder = inputFolder;
         this.outputFolder = outputFolder;
         this.suffixes = suffixes;
-        jobId = autoIncrement++;
-        this.fileOperation = fileOperation;
+        jobId = autoIncrement.incrementAndGet();
+        SimpleModelIJobWithoutSwitch.fileOperation = fileOperation;
     }
 
 

@@ -1,36 +1,38 @@
 package model.string_filters;
 
 public class FilterException extends RuntimeException {
-        protected ErrorCode errorCode = ErrorCode.OK;
-        protected String errorParameter;
+    private static final long serialVersionUID = -2738144329502932175L;
 
-        public FilterException() {
-        }
+    protected ErrorCode errorCode = ErrorCode.OK;
+    protected String errorParameter;
 
-        public FilterException(String message) {
-            super(message);
-        }
+    public FilterException() {
+    }
 
-        public FilterException(ErrorCode errorCode) {
-            this.errorCode = errorCode;
-        }
+    public FilterException(String message) {
+        super(message);
+    }
 
-        public FilterException(ErrorCode errorCode, String errorParameter) {
-            this(errorCode);
-            this.errorParameter = errorParameter;
-        }
+    public FilterException(ErrorCode errorCode) {
+        this.errorCode = errorCode;
+    }
 
-        public String errorMessage() {
-            switch (errorCode) {
-                case OK:
-                    return "Ok.";
-                case ILLEGAL_ARGUMENT_NOT_LEGAL_SIZE:
-                    return String.format("Argument -%s is not allowed. Should be one character long", errorParameter);
-                case ILLEGAL_FILTER_PATTERN_SYNTAX:
-                    return String.format("Filter pattern invalid: %s.", errorParameter);
-                case UNSUPPORTED_OPERATION:
-                    return String.format("This operation is not supported: %s.", errorParameter);
-            }
-            return "";
+    public FilterException(ErrorCode errorCode, String errorParameter) {
+        this(errorCode);
+        this.errorParameter = errorParameter;
+    }
+
+    public String errorMessage() {
+        switch (errorCode) {
+            case OK:
+                return "Ok.";
+            case ILLEGAL_ARGUMENT_NOT_LEGAL_SIZE:
+                return String.format("Argument -%s is not allowed. Should be one character long", errorParameter);
+            case ILLEGAL_FILTER_PATTERN_SYNTAX:
+                return String.format("Filter pattern invalid: %s.", errorParameter);
+            case UNSUPPORTED_OPERATION:
+                return String.format("This operation is not supported: %s.", errorParameter);
         }
+        return "";
+    }
 }

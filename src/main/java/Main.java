@@ -29,8 +29,6 @@ public final class Main {
         IController controller = new SimpleController(model);
         IView view = new SimpleView(model, controller);
         view.createView();
-
-        logger.info("Application finished.");
     }
 
 

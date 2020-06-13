@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
+import java.nio.file.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,9 +26,7 @@ public class FileLocatorImpl implements IFileLocator {
                 10,
                 (path, basicFileAttribute) -> {
                     if (basicFileAttribute.isRegularFile()) {
-                        if (pathMatcher.matches(path)) {
-                            return true;
-                        }
+                        return pathMatcher.matches(path);
                     }
                     return false;
                 }
@@ -45,9 +40,11 @@ public class FileLocatorImpl implements IFileLocator {
     }
 
     private PathMatcher compileRegex(@NotNull String syntaxAndPattern) throws FileLocatorException {
-        try {
-            return FileSystems.getDefault()
-                    .getPathMatcher(syntaxAndPattern);
+        try (FileSystem defaultFileSystem = FileSystems.getDefault()) {
+            return defaultFileSystem.getPathMatcher(syntaxAndPattern);
+        } catch (IOException ex) {
+            logger.error("Failed to create default File System. Using static FileSystems.getDefault() method");
+            throw  new FileLocatorException(ex);
         } catch (IllegalArgumentException | UnsupportedOperationException ex) {
             logger.error("Regex pattern is not valid! {}", syntaxAndPattern);
             throw new FileLocatorException(ex);
@@ -66,6 +63,9 @@ public class FileLocatorImpl implements IFileLocator {
 
     @Override
     public List<Path> findUsingSuffixes(Path rootFolder, ISuffixesCollection suffixes) {
-        return findUsingRegex(rootFolder, suffixes.getGlobRegexFromSuffixes());
+        return findUsingRegex(
+                rootFolder,
+                suffixes.getFileGlobRegexFromSuffixes()
+        );
     }
 }

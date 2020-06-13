@@ -6,6 +6,7 @@ public class RenameFileOperation extends IFileOperation {
 
     @Override
     public void performFileOperation(Path inputFile, Path outputFile) throws FileOperationException {
-        fileOperation.rename(inputFile, outputFile.getFileName().toString());
+        String outputFileName = outputFile.getFileName().toString();
+        fileOperation.rename(inputFile, outputFileName);
     }
 }

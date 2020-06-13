@@ -4,17 +4,21 @@ import model.IPredefinedSuffixesLoader;
 
 public class SimpleModelPredefinesSuffixesLoaderImpl implements IPredefinedSuffixesLoader {
 
-    private SimpleModelSuffixesCategoriesDb categoriesDb;
+    private final SimpleModelSuffixesDb categoriesDb;
 
     public SimpleModelPredefinesSuffixesLoaderImpl() {
-        categoriesDb = new SimpleModelSuffixesCategoriesDb();
-        categoriesDb.addNewPredefinedFileSuffixesCategory(PredefinedSuffixesEnum.AUDIO.getSuffixes());
-        categoriesDb.addNewPredefinedFileSuffixesCategory(PredefinedSuffixesEnum.VIDEO.getSuffixes());
-        categoriesDb.addNewPredefinedFileSuffixesCategory(PredefinedSuffixesEnum.AUDIO_AND_VIDEO.getSuffixes());
+        categoriesDb = new SimpleModelSuffixesDb();
+        loadAllKnownPredefinedSuffixesFromEnum();
+    }
+
+    private void loadAllKnownPredefinedSuffixesFromEnum() {
+        for(PredefinedSuffixesEnum value: PredefinedSuffixesEnum.values()) {
+            categoriesDb.addNewSuffixesCollection(value.getSuffixes());
+        }
     }
 
     @Override
-    public SimpleModelSuffixesCategoriesDb load() {
+    public SimpleModelSuffixesDb load() {
         return categoriesDb;
     }
 }

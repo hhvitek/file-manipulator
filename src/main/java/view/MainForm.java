@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MainForm {
@@ -119,13 +120,19 @@ public class MainForm {
         comboBoxChoosePredefinedFileSuffixes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                newPredefinedSuffixesChosenByUser(comboBoxChoosePredefinedFileSuffixes.getSelectedItem().toString());
+                Object selectedItem = comboBoxChoosePredefinedFileSuffixes.getSelectedItem();
+                if (Objects.nonNull(selectedItem)) {
+                    newPredefinedSuffixesChosenByUser(selectedItem.toString());
+                }
             }
         });
         comboBoxFileOperations.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                newFileOperationChosenByUser(comboBoxFileOperations.getSelectedItem().toString());
+                Object selectedItem = comboBoxFileOperations.getSelectedItem();
+                if (Objects.nonNull(selectedItem)) {
+                    newFileOperationChosenByUser(selectedItem.toString());
+                }
             }
         });
     }
@@ -165,11 +172,11 @@ public class MainForm {
     }
 
     private void newInputFolderChosenByUser(String newInputFolder) {
-        controller.newInputFolderChosenByUser(newInputFolder.toString());
+        controller.newInputFolderChosenByUser(newInputFolder);
     }
 
     private void newOutputFolderChosenByUser(String newOutputFolder) {
-        controller.newOutputFolderChosenByUser(newOutputFolder.toString());
+        controller.newOutputFolderChosenByUser(newOutputFolder);
     }
 
     private void newSuffixesChosenByUser(String newSuffixes) {
@@ -203,9 +210,9 @@ public class MainForm {
     }
 
     private void fillPredefinedSuffixes() {
-        for(ISuffixesCollection predefinedCategory: model.getPredefinedFileSuffixesCategories()) {
+        for(ISuffixesCollection predefinedCategory: model.getPredefinedFileSuffixesDb()) {
             comboBoxChoosePredefinedFileSuffixes.addItem(
-                    predefinedCategory.getCategoryName()
+                    predefinedCategory.getName()
             );
         }
     }
@@ -225,7 +232,12 @@ public class MainForm {
     private void storeAllToModel() {
         newInputFolderChosenByUser(textFieldInputFolder.getText());
         newOutputFolderChosenByUser(textFieldOutputFolder.getText());
-        newFileOperationChosenByUser(comboBoxFileOperations.getSelectedItem().toString());
+
+        Object selectedItem = comboBoxFileOperations.getSelectedItem();
+        if (Objects.nonNull(selectedItem)) {
+            newFileOperationChosenByUser(selectedItem.toString());
+        }
+
         newSuffixesChosenByUser(textFieldFileSuffixes.getText());
     }
 }

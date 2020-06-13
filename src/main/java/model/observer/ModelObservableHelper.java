@@ -30,7 +30,7 @@ public class ModelObservableHelper implements IObservable {
     @Override
     public void notifyObservers() {
         observers.forEach(
-                observer -> observer.update()
+                IObserver::update
         );
     }
 }

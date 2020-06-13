@@ -1,4 +1,4 @@
-package model.string.squeeze;
+package model.string_operations.squeeze;
 
 /**
  * Squeezes every squeezable sequence of characters.

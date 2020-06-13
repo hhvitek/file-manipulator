@@ -1,4 +1,4 @@
-package model.string.squeeze;
+package model.string_operations.squeeze;
 
 import org.jetbrains.annotations.NotNull;
 

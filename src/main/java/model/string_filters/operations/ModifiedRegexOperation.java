@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
-abstract public class ModifiedRegexOperation extends RegexOperation {
+public abstract class ModifiedRegexOperation extends RegexOperation {
 
     protected Pattern modifiedFilterPattern;
 
@@ -19,5 +19,5 @@ abstract public class ModifiedRegexOperation extends RegexOperation {
         modifiedFilterPattern = modifyPattern(filterPattern);
     }
 
-    abstract protected Pattern modifyPattern(@NotNull Pattern filterPattern);
+    protected abstract Pattern modifyPattern(@NotNull Pattern filterPattern);
 }

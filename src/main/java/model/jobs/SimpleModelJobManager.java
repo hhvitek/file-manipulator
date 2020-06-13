@@ -6,9 +6,7 @@ import model.ISuffixesCollection;
 import model.file_operations.IFileOperation;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -43,7 +41,7 @@ public class SimpleModelJobManager implements IJobManager {
 
     @Override
     public List<IJob> getJobs() {
-        return jobs;
+        return Collections.unmodifiableList(jobs);
     }
 
     @Override

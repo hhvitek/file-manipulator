@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-abstract public class IModelTest {
+public abstract class IModelTest {
 
     protected IModel model;
     protected static Path INPUT_FOLDER =
@@ -53,7 +53,7 @@ abstract public class IModelTest {
 
     @Test
     void numberOfPredefinedSuffixes_EqualsThreeTest() {
-        Assertions.assertEquals(3, model.getPredefinedFileSuffixesCategories().size());
+        Assertions.assertEquals(3, model.getPredefinedFileSuffixesDb().size());
     }
 
     @Test

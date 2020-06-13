@@ -1,7 +1,7 @@
 package model;
 
-import model.simplemodel.SimpleModelSuffixesCategoriesDb;
+import model.simplemodel.SimpleModelSuffixesDb;
 
 public interface IPredefinedSuffixesLoader {
-    SimpleModelSuffixesCategoriesDb load();
+    SimpleModelSuffixesDb load();
 }

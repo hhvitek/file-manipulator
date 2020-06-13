@@ -1,4 +1,4 @@
-package model.string;
+package model.string_operations;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,4 +15,6 @@ public interface StringAdditionalOperations {
     String squeezeEverything(@NotNull String input);
 
     String squeezeWhat(@NotNull String input, char squeezeWhat);
+
+    String generateRandomAlphanumericString(int length);
 }

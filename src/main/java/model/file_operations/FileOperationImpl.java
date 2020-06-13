@@ -4,8 +4,11 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
+import java.util.stream.Stream;
 
 public class FileOperationImpl implements FileOperation {
     @Override
@@ -14,7 +17,10 @@ public class FileOperationImpl implements FileOperation {
             createParentDirectoryHierarchyIfNotAlreadyExists(to);
             Files.copy(what, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new FileOperationException(FileOperationErrorsEnum.IO_OPERATION_ERROR, e.getLocalizedMessage());
+            throw new FileOperationException(
+                    FileOperationErrorsEnum.IO_OPERATION_ERROR,
+                    e.getLocalizedMessage()
+            );
         }
     }
 
@@ -50,9 +56,8 @@ public class FileOperationImpl implements FileOperation {
 
     @Override
     public void delete(Path what) throws FileOperationException {
-        try {
-            Files.walk(what)
-                    .sorted(Comparator.reverseOrder())
+        try (Stream<Path> walk = Files.walk(what)) {
+            walk.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(File::delete);
         } catch (IOException e) {

@@ -26,7 +26,7 @@ public enum FileOperationEnum {
         }
     };
 
-    abstract public IFileOperation getFileOperationInstance();
+    public abstract IFileOperation getFileOperationInstance();
 
     private static class Constants {
         public static final IFileOperation COPY_OPERATION = new CopyFileOperation();

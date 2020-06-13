@@ -1,7 +1,7 @@
 package model;
 
 import model.observer.IObservable;
-import model.simplemodel.SimpleModelSuffixesCategoriesDb;
+import model.simplemodel.SimpleModelSuffixesDb;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -29,7 +29,7 @@ public interface IModel extends IObservable {
     void stopAll();
     void startJobInParallel(int jobId);
 
-    SimpleModelSuffixesCategoriesDb getPredefinedFileSuffixesCategories();
-    void addNewPredefinedFileSuffixesCategory(ISuffixesCollection newPredefinedSuffixesCategory);
-    Optional<ISuffixesCollection> getPredefinesFileSuffixesByCategoryName(String categoryName);
+    SimpleModelSuffixesDb getPredefinedFileSuffixesDb();
+    void addNewPredefinedFileSuffixesCollection(ISuffixesCollection newPredefinedSuffixesCollection);
+    Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(String name);
 }

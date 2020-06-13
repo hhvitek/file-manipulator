@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ChainOfOperations {
 
-    List<Operation> operations;
+    private List<Operation> operations;
 
     public ChainOfOperations() {
         operations = new ArrayList<>();

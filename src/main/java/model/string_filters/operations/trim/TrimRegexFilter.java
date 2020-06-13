@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class TrimRegexFilter extends ModifiedRegexOperation {
 
-    private final static Pattern DEFAULT_PATTERN = Pattern.compile("\\s+");
+    private static final Pattern DEFAULT_PATTERN = Pattern.compile("\\s+");
 
     public TrimRegexFilter() {
         addFilter(DEFAULT_PATTERN);

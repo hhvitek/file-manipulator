@@ -15,19 +15,16 @@ import java.util.stream.Collectors;
 
 public class SimpleModel implements IModel {
 
-    private ModelObservableHelper modelObservableHelper;
+    private final ModelObservableHelper modelObservableHelper;
 
-    private IJobManager jobManager;
+    private final IJobManager jobManager;
 
-    private SimpleModelSuffixesCategoriesDb suffixesDb;
-
-    private IModelStaticData staticData;
+    private final IModelStaticData staticData;
 
     private FileOperationEnum fileOperationEnum;
 
     public SimpleModel() {
         modelObservableHelper = new ModelObservableHelper();
-        suffixesDb = new SimpleModelSuffixesCategoriesDb();
         staticData = new SimpleModelStaticDataImpl();
         jobManager = new SimpleModelJobManager();
         fileOperationEnum = FileOperationEnum.COPY;
@@ -55,12 +52,12 @@ public class SimpleModel implements IModel {
 
     @Override
     public void setSuffixes(ISuffixesCollection newSuffixes) {
-        staticData.setFileSuffixes(newSuffixes);
+        staticData.setCurrentSuffixesCollection(newSuffixes);
     }
 
     @Override
     public ISuffixesCollection getSuffixes() {
-        return staticData.getFileSuffixes();
+        return staticData.getCurrentSuffixesCollection();
     }
 
     @Override
@@ -72,8 +69,8 @@ public class SimpleModel implements IModel {
     }
 
     @Override
-    public void setOperation(String chosenOperation) throws IllegalArgumentException {
-        fileOperationEnum = FileOperationEnum.valueOf(chosenOperation);
+    public void setOperation(String operationName) throws IllegalArgumentException {
+        fileOperationEnum = FileOperationEnum.valueOf(operationName);
     }
 
     @Override
@@ -116,18 +113,18 @@ public class SimpleModel implements IModel {
     }
 
     @Override
-    public SimpleModelSuffixesCategoriesDb getPredefinedFileSuffixesCategories() {
-        return staticData.getPredefinedFileSuffixesCategories();
+    public SimpleModelSuffixesDb getPredefinedFileSuffixesDb() {
+        return staticData.getSuffixesDb();
     }
 
     @Override
-    public void addNewPredefinedFileSuffixesCategory(ISuffixesCollection newPredefinedSuffixesCategory) {
-        staticData.addNewPredefinedFileSuffixesCategory(newPredefinedSuffixesCategory);
+    public void addNewPredefinedFileSuffixesCollection(ISuffixesCollection newPredefinedSuffixesCollection) {
+        staticData.addNewPredefinedSuffixesCollection(newPredefinedSuffixesCollection);
     }
 
     @Override
-    public Optional<ISuffixesCollection> getPredefinesFileSuffixesByCategoryName(String categoryName) {
-        return staticData.getPredefinesFileSuffixesByCategoryName(categoryName);
+    public Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(String name) {
+        return staticData.getPredefinedSuffixesCollectionByName(name);
     }
 
     @Override

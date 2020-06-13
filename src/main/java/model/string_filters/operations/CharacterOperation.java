@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract public class CharacterOperation extends Operation {
+public abstract class CharacterOperation extends Operation {
 
     protected List<Character> filterCharacters;
     protected String replaceWith;

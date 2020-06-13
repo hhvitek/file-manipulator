@@ -10,7 +10,7 @@ import java.util.regex.PatternSyntaxException;
 
 import static model.string_filters.ErrorCode.ILLEGAL_FILTER_PATTERN_SYNTAX;
 
-abstract public class RegexOperation extends Operation {
+public abstract class RegexOperation extends Operation {
 
     private static final Logger logger = LoggerFactory.getLogger(RegexOperation.class);
 
@@ -63,5 +63,5 @@ abstract public class RegexOperation extends Operation {
         return (filterPattern != null);
     }
 
-    abstract protected String performOperation(@NotNull String input, @NotNull Pattern filterPattern);
+    protected abstract String performOperation(@NotNull String input, @NotNull Pattern filterPattern);
 }

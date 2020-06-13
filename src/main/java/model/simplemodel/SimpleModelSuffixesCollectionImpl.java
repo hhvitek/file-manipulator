@@ -1,6 +1,8 @@
 package model.simplemodel;
 
 import model.ISuffixesCollection;
+import model.string_operations.CustomStringAdditionalOperationsImpl;
+import model.string_operations.StringAdditionalOperations;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -9,16 +11,18 @@ import java.util.stream.Collectors;
 
 public class SimpleModelSuffixesCollectionImpl implements ISuffixesCollection {
 
-    private List<String> suffixes;
-    private String name;
+    private final List<String> suffixes;
+    private final String name;
+    private static final StringAdditionalOperations stringAdditionalOperations = new CustomStringAdditionalOperationsImpl();
+    private static final String DELIMITER = ",";
 
     public SimpleModelSuffixesCollectionImpl() {
-        name = "";
         suffixes = new ArrayList<>();
+        name = stringAdditionalOperations.generateRandomAlphanumericString(0);
     }
 
     public SimpleModelSuffixesCollectionImpl(String categoryName) {
-        this();
+        suffixes = new ArrayList<>();
         name = categoryName;
     }
 
@@ -49,11 +53,13 @@ public class SimpleModelSuffixesCollectionImpl implements ISuffixesCollection {
                 .collect(Collectors.toList());
     }
 
-
-
     @Override
     public String getSuffixesAsDelimitedString(String delimiter) {
         return joinListOfStringIntoOneDelimitedString(suffixes, delimiter);
+    }
+
+    private String joinListOfStringIntoOneDelimitedString(List<String> listOfStrings, String delimiter) {
+        return String.join(delimiter, listOfStrings);
     }
 
     @Override
@@ -64,25 +70,20 @@ public class SimpleModelSuffixesCollectionImpl implements ISuffixesCollection {
     }
 
     @Override
-    public String getGlobRegexFromSuffixes() throws PatternSyntaxException {
+    public String getFileGlobRegexFromSuffixes() throws PatternSyntaxException {
         // regex: "glob:**.{exe,bat,sh}"
-        String delimitedSuffixes = getSuffixesAsDelimitedString(",");
+        String delimitedSuffixes = getSuffixesAsDelimitedString(DELIMITER);
         return String.format("glob:**.{%s}", delimitedSuffixes);
     }
 
     @Override
-    public int getSuffixesSize() {
-        return suffixes.size();
-    }
-
-    @Override
-    public String getCategoryName() {
+    public String getName() {
         return name;
     }
 
     @Override
-    public boolean isNamed() {
-        return name != null && !name.isEmpty();
+    public boolean hasName(String anotherName) {
+        return name.equalsIgnoreCase(anotherName);
     }
 
     @NotNull
@@ -91,31 +92,22 @@ public class SimpleModelSuffixesCollectionImpl implements ISuffixesCollection {
         return suffixes.iterator();
     }
 
-
-
-    private String joinListOfStringIntoOneDelimitedString(List<String> listOfStrings, String delimiter) {
-        return listOfStrings
-                .stream()
-                .collect(
-                        Collectors.joining(delimiter)
-                );
-    }
-
     @Override
     public String toString() {
-        return getSuffixesAsDelimitedString(", ");
+        return getSuffixesAsDelimitedString(DELIMITER + " ");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SimpleModelSuffixesCollectionImpl strings = (SimpleModelSuffixesCollectionImpl) o;
-        return suffixes.equals(strings.suffixes);
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        SimpleModelSuffixesCollectionImpl that = (SimpleModelSuffixesCollectionImpl) obj;
+        return suffixes.equals(that.suffixes)
+                && hasName(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(suffixes);
+        return Objects.hash(suffixes, name);
     }
 }

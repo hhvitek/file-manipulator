@@ -32,8 +32,6 @@ public class MainFormUtility {
 
     /**
      * Callable after swing frame.pack() function to center application window.
-     *
-     * @param frame
      */
     private static void setCenteredToGoldenRatio(JFrame frame) {
         Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();

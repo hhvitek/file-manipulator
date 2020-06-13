@@ -14,7 +14,7 @@ public class TrimCharacterFilter extends CharacterOperation {
     }
 
     @Override
-    public  void addFilter(@NotNull char newFilter) {
+    public  void addFilter(char newFilter) {
         addFilter(String.valueOf(newFilter));
     }
 
