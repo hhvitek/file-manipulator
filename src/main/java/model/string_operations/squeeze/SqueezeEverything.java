@@ -1,6 +1,7 @@
 package model.string_operations.squeeze;
 
 /**
+ * {@code
  * Squeezes every squeezable sequence of characters.
  *
  * Squeezable sequence of character is defined as a consecutive sequence of the same characters
@@ -9,6 +10,7 @@ package model.string_operations.squeeze;
  * For example.
  * Input: aaXbbBBBcCCC
  * Output: aXbBcC
+ * }
  */
 public class SqueezeEverything extends StringSqueeze {
 

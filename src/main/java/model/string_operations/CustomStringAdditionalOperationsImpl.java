@@ -6,6 +6,7 @@ import model.string_operations.squeeze.SqueezeSpecificCharRegexOnly;
 import model.string_operations.squeeze.StringSqueeze;
 import org.jetbrains.annotations.NotNull;
 
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -47,7 +48,7 @@ public class CustomStringAdditionalOperationsImpl implements StringAdditionalOpe
     /**
      * Source code from: https://www.baeldung.com/java-random-string
      *
-     * @param length Length of generated String. If length is less or equal zero the length is chosen at random.
+     * @param length Length of generated String. If the length is less or equal zero the new length is chosen...at random.
      */
     @Override
     public String generateRandomAlphanumericString(int length) {
@@ -62,7 +63,7 @@ public class CustomStringAdditionalOperationsImpl implements StringAdditionalOpe
         int leftLimit = 48; // numeral '0'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 10;
-        Random random = new Random();
+        SecureRandom random = new SecureRandom(); // secure random crypto secure -- just to show difference to Random()
 
         String generatedString = random.ints(leftLimit, rightLimit + 1)
                 .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))

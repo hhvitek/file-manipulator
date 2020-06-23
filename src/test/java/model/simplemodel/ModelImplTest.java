@@ -3,9 +3,9 @@ package model.simplemodel;
 import model.IModelTest;
 import org.junit.jupiter.api.BeforeEach;
 
-class SimpleModelTest extends IModelTest {
+class ModelImplTest extends IModelTest {
     @BeforeEach
     void init() {
-        model = new SimpleModel();
+        model = new ModelImpl();
     }
 }

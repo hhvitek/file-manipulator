@@ -1,7 +1,5 @@
 package model.jobs;
 
-import model.IJob;
-import model.IJobManager;
 import model.ISuffixesCollection;
 import model.file_operations.IFileOperation;
 
@@ -11,45 +9,51 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class SimpleModelJobManager implements IJobManager {
+public class JobManagerImpl implements IJobManager {
 
-    private List<IJob> jobs;
-    private List<Future> jobTasks;
+    private final Map<Integer, IJob> jobs;
+    private final Map<Integer, Future<IJob>> jobTasks;
+
     private final ExecutorService executor;
 
-    public SimpleModelJobManager() {
-        jobs = new ArrayList<>();
-        jobTasks = new ArrayList<>();
+    public JobManagerImpl() {
+        jobs = new HashMap<>();
+        jobTasks = new HashMap<>();
         executor = Executors.newSingleThreadExecutor();
     }
 
     @Override
     public int createJob(Path inputFolder, Path outputFolder, ISuffixesCollection suffixes, IFileOperation fileOperation) {
-        IJob newJob = new SimpleModelIJobWithoutSwitch(inputFolder, outputFolder, suffixes, fileOperation);
-        jobs.add(newJob);
-        createNewJobTask(newJob);
+        IJob newJob = new JobImpl(inputFolder, outputFolder, suffixes, fileOperation);
+        appendJob(newJob);
         return newJob.getId();
     }
 
+    public void appendJob(IJob newJob) {
+        jobs.put(newJob.getId(), newJob);
+        createNewJobTask(newJob);
+    }
+
     private void createNewJobTask(IJob job) {
-        Runnable runnableJob = () -> {
-            job.start();
-        };
+        Runnable runnableJob = job::start;
         Future future = executor.submit(runnableJob);
-        jobTasks.add(future);
+        jobTasks.put(job.getId(), future);
     }
 
     @Override
     public List<IJob> getJobs() {
+        List<IJob> jobs = getListFromCollection(this.jobs.values());
         return Collections.unmodifiableList(jobs);
+    }
+
+    private List<IJob> getListFromCollection(Collection<IJob> collection) {
+        return new ArrayList<>(collection);
     }
 
     @Override
     public Optional<IJob> getJobById(int id) {
-        for(IJob job: jobs) {
-            if (job.getId() == id) {
-                return Optional.of(job);
-            }
+        if (jobs.containsKey(id)) {
+            return Optional.of(jobs.get(id));
         }
         return Optional.empty();
     }
@@ -62,21 +66,23 @@ public class SimpleModelJobManager implements IJobManager {
 
     @Override
     public void stopAll() {
-        jobs.forEach(
+        jobs.values().forEach(
                 IJob::stop
         );
     }
 
     @Override
-    public void cancel() {
-        stopAll();
-        executor.shutdown();
+    public void cancelAll() {
+        jobTasks.values().forEach(
+                x -> x.cancel(true)
+        );
     }
 
     @Override
-    public void startJobIfExists(int jobId) {
-        Optional<IJob> job = getJobById(jobId);
-        job.ifPresent(IJob::start);
+    public void shutdown() {
+        stopAll();
+        cancelAll();
+        executor.shutdown();
     }
 
     @Override
@@ -89,5 +95,13 @@ public class SimpleModelJobManager implements IJobManager {
         }
     }
 
-
+    @Override
+    public boolean isFinished(int jobId) {
+        Optional<IJob> foundJob = getJobById(jobId);
+        if (foundJob.isPresent()) {
+            return foundJob.get().isFinished();
+        } else {
+            return false;
+        }
+    }
 }

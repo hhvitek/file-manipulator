@@ -1,28 +1,30 @@
 package model.simplemodel;
 
 import model.IModelStaticData;
-import model.IPredefinedSuffixesLoader;
+import model.ISuffixesDb;
 import model.ISuffixesCollection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-public class SimpleModelStaticDataImpl implements IModelStaticData {
+public class ModelStaticDataImpl implements IModelStaticData {
 
     private static final String DEFAULT_OUTPUT_FOLDER_NAME = "OUTPUT";
+    private static final String DEFAULT_SUFFIXES_COLLECTION_NAME = "DEFAULT_SUFFIXES_COLLECTION";
 
     private Path inputFolder;
     private Path outputFolder;
-    private SimpleModelSuffixesDb suffixesDb;
+    private CollectionOfSuffixesCollections suffixesDb;
     private ISuffixesCollection currentSuffixesCollection;
 
-    public SimpleModelStaticDataImpl() {
+    public ModelStaticDataImpl() {
         inputFolder = getCurrentWorkingFolder();
         outputFolder = inputFolder.resolve(DEFAULT_OUTPUT_FOLDER_NAME);
         initializeSuffixesDb();
-        initializeCurrentSuffixes();
+        initializeCurrentSuffixes(suffixesDb);
     }
 
     private static Path getCurrentWorkingFolder() {
@@ -31,12 +33,16 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
     }
 
     private void initializeSuffixesDb() {
-        IPredefinedSuffixesLoader loader = new SimpleModelPredefinesSuffixesLoaderImpl();
+        ISuffixesDb loader = new SuffixesDbImpl();
         suffixesDb = loader.load();
     }
 
-    private void initializeCurrentSuffixes() {
-        currentSuffixesCollection = suffixesDb.getFirstSuffixesCollection();
+    private void initializeCurrentSuffixes(CollectionOfSuffixesCollections suffixesDb) {
+        if (!suffixesDb.isEmpty()) {
+            currentSuffixesCollection = suffixesDb.getFirst();
+        } else {
+            currentSuffixesCollection = new SuffixesCollectionImpl(DEFAULT_SUFFIXES_COLLECTION_NAME);
+        }
     }
 
     @Override
@@ -60,22 +66,22 @@ public class SimpleModelStaticDataImpl implements IModelStaticData {
     }
 
     @Override
-    public void setCurrentSuffixesCollection(ISuffixesCollection newSuffixesCollection) {
+    public void setCurrentSuffixesCollection(@NotNull ISuffixesCollection newSuffixesCollection) {
         currentSuffixesCollection = newSuffixesCollection;
     }
 
     @Override
-    public ISuffixesCollection getCurrentSuffixesCollection() {
+    public @Nullable ISuffixesCollection getCurrentSuffixesCollection() {
         return currentSuffixesCollection;
     }
 
     @Override
-    public SimpleModelSuffixesDb getSuffixesDb() {
+    public CollectionOfSuffixesCollections getSuffixesDb() {
         return suffixesDb;
     }
 
     @Override
-    public void addNewPredefinedSuffixesCollection(ISuffixesCollection newPredefinedSuffixesCollection) {
+    public void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection) {
         suffixesDb.addNewSuffixesCollection(newPredefinedSuffixesCollection);
     }
 

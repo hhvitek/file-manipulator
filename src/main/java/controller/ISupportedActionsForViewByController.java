@@ -7,6 +7,6 @@ public interface ISupportedActionsForViewByController {
     void newSuffixesChosenByUser(String newSuffixes, String delimiter);
     void newPredefinedSuffixesChosenByUser(String categoryName);
     void newFileOperationChosenByUser(String operationName);
-    void createJob();
+    void createAndStartJob();
     void stopAll();
 }

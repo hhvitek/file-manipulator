@@ -18,7 +18,6 @@ public class FileNameFilterOperation extends Operation {
         operationsChain = createFileNameOperationsChain();
     }
 
-    @SuppressWarnings("HardcodedFileSeparator")
     private ChainOfOperations createFileNameOperationsChain() {
         operationsChain = new ChainOfOperations();
 

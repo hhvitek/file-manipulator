@@ -21,6 +21,12 @@ public enum PredefinedSuffixesEnum {
             String combinedAudioAndVideo = Constants.audioSuffixes + "," + Constants.videoSuffixes;
             return createSuffixesCollection(name(), combinedAudioAndVideo);
         }
+    },
+    ALL {
+        @Override
+        public ISuffixesCollection getSuffixes() {
+            return SuffixesCollectionImpl.getAllSuffixCollection();
+        }
     };
 
     private static final class Constants {
@@ -29,7 +35,7 @@ public enum PredefinedSuffixesEnum {
     }
 
     protected ISuffixesCollection createSuffixesCollection(String categoryName, String delimitedSuffixes) {
-        ISuffixesCollection category = new SimpleModelSuffixesCollectionImpl(categoryName);
+        ISuffixesCollection category = new SuffixesCollectionImpl(categoryName);
         category.addSuffixes(delimitedSuffixes, ",");
         return category;
     }

@@ -4,7 +4,7 @@ public class FilterException extends RuntimeException {
     private static final long serialVersionUID = -2738144329502932175L;
 
     protected ErrorCode errorCode = ErrorCode.OK;
-    protected String errorParameter;
+    protected String errorParameter = "Ok.";
 
     public FilterException() {
     }

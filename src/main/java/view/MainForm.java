@@ -88,7 +88,7 @@ public class MainForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 loadAllAndUpdateFromModel();
-                controller.createJob();
+                controller.createAndStartJob();
             }
         });
         buttonCancel.addActionListener(new ActionListener() {

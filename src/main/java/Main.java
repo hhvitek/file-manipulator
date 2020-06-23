@@ -1,7 +1,7 @@
 import controller.IController;
 import controller.SimpleController;
 import model.IModel;
-import model.simplemodel.SimpleModel;
+import model.simplemodel.ModelImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.IView;
@@ -25,7 +25,7 @@ public final class Main {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         setUIFont(new javax.swing.plaf.FontUIResource("Segoe UI", Font.PLAIN, 14));
 
-        IModel model = new SimpleModel();
+        IModel model = new ModelImpl();
         IController controller = new SimpleController(model);
         IView view = new SimpleView(model, controller);
         view.createView();

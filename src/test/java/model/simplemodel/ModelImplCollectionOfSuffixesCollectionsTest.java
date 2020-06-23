@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SimpleModelSuffixesDbTest {
+class ModelImplCollectionOfSuffixesCollectionsTest {
 
-    SimpleModelSuffixesDb suffixesDb = new SimpleModelSuffixesDb();
+    CollectionOfSuffixesCollections suffixesDb = new CollectionOfSuffixesCollections();
 
     @Test
     void addNewSuffixesCollection_DbSizeEqualsOneTest() {
@@ -21,7 +21,7 @@ class SimpleModelSuffixesDbTest {
     }
 
     private ISuffixesCollection createTheFirstSuffixCollection() {
-        ISuffixesCollection suffixesCollection = new SimpleModelSuffixesCollectionImpl("the first collection");
+        ISuffixesCollection suffixesCollection = new SuffixesCollectionImpl("the first collection");
         suffixesCollection.addSuffix("mp3");
         return suffixesCollection;
     }
@@ -43,10 +43,10 @@ class SimpleModelSuffixesDbTest {
         ISuffixesCollection suffixesCollection = createTheFirstSuffixCollection();
         suffixesDb.addNewSuffixesCollection(suffixesCollection);
 
-        ISuffixesCollection suffixesCollection_2 = new SimpleModelSuffixesCollectionImpl("the second collection");
+        ISuffixesCollection suffixesCollection_2 = new SuffixesCollectionImpl("the second collection");
         suffixesDb.addNewSuffixesCollection(suffixesCollection_2);
 
-        ISuffixesCollection suffixesCollection_3 = new SimpleModelSuffixesCollectionImpl("the third collection");
+        ISuffixesCollection suffixesCollection_3 = new SuffixesCollectionImpl("the third collection");
         suffixesDb.addNewSuffixesCollection(suffixesCollection_3);
 
         int iterationsExpected = 3;

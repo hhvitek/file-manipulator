@@ -18,10 +18,9 @@ class FileLocatorImplTest extends FileLocatorTest {
     void listAllFilesTest() {
         int expectedFoundFiles = 8;
 
-        List<Path> foundFiles = locator.findUsingRegex(rootFolder, "glob:**");
+        List<Path> foundFiles = locator.findUsingRegex(rootFolder, "glob:*");
         int actualFoundFiles = foundFiles.size();
 
         Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);
     }
-
 }

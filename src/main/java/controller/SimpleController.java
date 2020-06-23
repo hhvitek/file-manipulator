@@ -1,21 +1,29 @@
 package controller;
 
+import model.jobs.IJob;
+import model.jobs.IJobManager;
 import model.IModel;
 import model.ISuffixesCollection;
+import model.jobs.JobObserver;
+import model.simplemodel.SuffixesCollectionImpl;
 import view.IView;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
-public class SimpleController implements IController {
+public class SimpleController implements IController, JobObserver {
 
     private IModel model;
+    private IJobManager modelJobManager;
+
     private IView view;
 
     public SimpleController(IModel model) {
         this.model = model;
+        modelJobManager = model.getJobManager();
     }
 
     @Override
@@ -25,7 +33,7 @@ public class SimpleController implements IController {
 
     @Override
     public void exitApplication() {
-        model.stopAll();
+        modelJobManager.shutdown();
         view.destroyView();
         //System.exit(0);
     }
@@ -60,10 +68,17 @@ public class SimpleController implements IController {
 
     @Override
     public void newSuffixesChosenByUser(String newSuffixes, String delimiter) {
-        ISuffixesCollection suffixes = new ControllerSuffixesCollectionImplSimple();
-        suffixes.addSuffixes(newSuffixes, delimiter);
-        model.setSuffixes(suffixes);
-        view.setSuffixes(suffixes);
+
+        ISuffixesCollection suffixesCollection;
+        if (newSuffixes != null && !newSuffixes.isEmpty()) {
+            suffixesCollection = new SuffixesCollectionImpl();
+            suffixesCollection.addSuffixes(newSuffixes, delimiter);
+        } else {
+            suffixesCollection = SuffixesCollectionImpl.getAllSuffixCollection();
+        }
+
+        model.setSuffixes(suffixesCollection);
+        view.setSuffixes(suffixesCollection);
         view.setStatusBar("Suffixes have been set.");
     }
 
@@ -96,14 +111,35 @@ public class SimpleController implements IController {
     }
 
     @Override
-    public void createJob() {
-        view.setStatusBar("Started mission! Using " + model.getSuffixes()  + " suffixes");
-        model.createJobWithDefaultParameters();
+    public void createAndStartJob() {
+        if (!haveModelAlreadyHaveJob()) {
+            IJob createdJob = model.createJobAsyncWithDefaultParameters();
+            createdJob.addObserver(this);
+            view.setStatusBar("Started mission! Using " + model.getSuffixes() + " suffixes.");
+        } else {
+            view.errorOccurred("Model is already busy!");
+        }
+    }
+
+    private boolean haveModelAlreadyHaveJob() {
+        List<IJob> jobs = modelJobManager.getJobs();
+        return !jobs.isEmpty();
     }
 
     @Override
     public void stopAll() {
-        model.stopAll();
+        modelJobManager.stopAll();
         view.setStatusBar("All tasks have been stopped");
+    }
+
+    @Override
+    public void update(IJob job, Path input, Path output) {
+        view.setStatusBar(
+                String.format("UPDATE|jobId:<%d>|oldFile:<%s>|newFile:<%s>",
+                        job.getId(),
+                        input.getFileName(),
+                        output.getFileName()
+                        )
+        );
     }
 }

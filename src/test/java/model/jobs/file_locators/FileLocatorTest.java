@@ -1,9 +1,9 @@
 package model.jobs.file_locators;
 
 import model.ISuffixesCollection;
-import model.simplemodel.SimpleModelSuffixesCollectionImpl;
+import model.simplemodel.SuffixesCollectionImpl;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
@@ -15,10 +15,10 @@ import java.util.List;
 abstract class FileLocatorTest {
 
     IFileLocator locator;
-    Path rootFolder;
+    static Path rootFolder;
 
-    @BeforeEach
-    void locateAndSetRootFolder() {
+    @BeforeAll
+    static void locateAndSetRootFolder() {
         URL rootFolderUrl = FileLocatorTest.class.getResource("root_folder_name");
         try {
             rootFolder = Paths.get(rootFolderUrl.toURI());
@@ -33,10 +33,31 @@ abstract class FileLocatorTest {
     void listFilesUsingSpecificSuffixes() {
         int expectedFoundFiles = 6;
 
-        ISuffixesCollection suffixes = new SimpleModelSuffixesCollectionImpl();
-        suffixes.addSuffixes("jpg,txt,avi", ",");
+        ISuffixesCollection suffixesCollection = new SuffixesCollectionImpl();
+        suffixesCollection.addSuffixes("jpg,txt,avi", ",");
 
-        List<Path> foundFiles = locator.findUsingSuffixes(rootFolder, suffixes);
+        List<Path> foundFiles = locator.findUsingSuffixesCollection(rootFolder, suffixesCollection);
+        int actualFoundFiles = foundFiles.size();
+
+        Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);
+    }
+
+    @Test
+    void listAllRegularFilesTest() {
+        int expectedFoundFiles = 8;
+
+        List<Path> foundFiles = locator.listAllFiles(rootFolder);
+        int actualFoundFiles = foundFiles.size();
+
+        Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);
+    }
+
+    @Test
+    void allSuffixesCollection_behavesLikeListAllFilesTest() {
+        int expectedFoundFiles = 8;
+
+        ISuffixesCollection emptyCollection = SuffixesCollectionImpl.getAllSuffixCollection();
+        List<Path> foundFiles = locator.findUsingSuffixesCollection(rootFolder, emptyCollection);
         int actualFoundFiles = foundFiles.size();
 
         Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);

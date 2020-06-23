@@ -1,7 +1,8 @@
 package model;
 
+import model.jobs.IJob;
 import model.simplemodel.PredefinedSuffixesEnum;
-import model.simplemodel.SimpleModelSuffixesCollectionImpl;
+import model.simplemodel.SuffixesCollectionImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,13 +15,14 @@ import java.nio.file.Paths;
 public abstract class IModelTest {
 
     protected IModel model;
-    protected static Path INPUT_FOLDER =
+
+    static Path INPUT_FOLDER =
             Paths.get("src", "test", "resources", "model", "jobs", "test_input_folder");
 
-    protected static Path OUTPUT_FOLDER =
+    static Path OUTPUT_FOLDER =
             INPUT_FOLDER.resolve("OUTPUT");
 
-    protected static void recreateTestingInputFolder() throws IOException {
+    static void recreateTestingInputFolder() throws IOException {
         deleteDirectoryIfExistsWithAllFiles(INPUT_FOLDER);
         Files.createDirectory(INPUT_FOLDER);
         createFileInInputFolder("file1.mp3");
@@ -29,11 +31,11 @@ public abstract class IModelTest {
         createFileInInputFolder("file4.ogg");
     }
 
-    protected static void deleteDirectoryIfExistsWithAllFiles(Path folder) throws IOException {
+    static void deleteDirectoryIfExistsWithAllFiles(Path folder) throws IOException {
         FileUtils.deleteDirectory(folder.toFile());
     }
 
-    protected static void createFileInInputFolder(String newFileName) throws IOException {
+    static void createFileInInputFolder(String newFileName) throws IOException {
         Files.createFile(INPUT_FOLDER.resolve(newFileName));
     }
 
@@ -52,8 +54,8 @@ public abstract class IModelTest {
     }
 
     @Test
-    void numberOfPredefinedSuffixes_EqualsThreeTest() {
-        Assertions.assertEquals(3, model.getPredefinedFileSuffixesDb().size());
+    void numberOfPredefinedSuffixes_EqualsFourTest() {
+        Assertions.assertEquals(4, model.getPredefinedFileSuffixesDb().size());
     }
 
     @Test
@@ -69,21 +71,24 @@ public abstract class IModelTest {
         model.setInputFolder(INPUT_FOLDER);
         model.setOutputFolder(OUTPUT_FOLDER);
 
-        ISuffixesCollection suffixes = new SimpleModelSuffixesCollectionImpl();
+        ISuffixesCollection suffixes = new SuffixesCollectionImpl();
         suffixes.addSuffixes("mp3, ogg", ",");
         model.setSuffixes(suffixes);
 
-        int jobId = model.createJobWithDefaultParameters();
-        model.startJobInParallel(jobId);
+        IJob createdJob = model.createJobAsyncWithDefaultParameters();
 
         Thread.sleep(2000);
 
-        Path expectedFileExists = model.getOutputFolder().resolve("file1_mp3").toAbsolutePath();
-        Path expectedSecondFileExists = model.getOutputFolder().resolve("file4_ogg").toAbsolutePath();
+        Assertions.assertTrue(createdJob.isStarted());
+        Assertions.assertTrue(createdJob.isFinished());
+        Assertions.assertFalse(createdJob.isRunning());
+
+        Path expectedFileExists = model.getOutputFolder().resolve("file1.mp3").toAbsolutePath();
+        Path expectedSecondFileExists = model.getOutputFolder().resolve("file4.ogg").toAbsolutePath();
         Assertions.assertTrue(Files.exists(expectedFileExists));
         Assertions.assertTrue(Files.exists(expectedSecondFileExists));
 
-        //recreateTestingInputFolder();
+        deleteDirectoryIfExistsWithAllFiles(OUTPUT_FOLDER);
     }
 
 }
