@@ -43,7 +43,8 @@ abstract class FileLocatorTest {
     }
 
     @Test
-    void listAllRegularFilesTest() {
+    void listAllRegularFilesTest()
+    {
         int expectedFoundFiles = 8;
 
         List<Path> foundFiles = locator.listAllFiles(rootFolder);
@@ -61,8 +62,6 @@ abstract class FileLocatorTest {
         int actualFoundFiles = foundFiles.size();
 
         Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);
-
-
     }
 
 }

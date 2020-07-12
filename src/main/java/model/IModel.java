@@ -80,5 +80,11 @@ public interface IModel {
 
     @NotNull CollectionOfSuffixesCollections getPredefinedFileSuffixesDb();
     void addNewPredefinedFileSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection);
+    void removePredefinedFileSuffixesCollection(@NotNull String name);
     Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(@NotNull String name);
+
+    /**
+     * Use persistent storage.
+     */
+    void storeAll();
 }

@@ -1,15 +1,23 @@
-package model.simplemodel;
+package model.simplemodel.staticdata;
 
-import model.IModelStaticData;
-import model.ISuffixesDb;
 import model.ISuffixesCollection;
+import model.simplemodel.CollectionOfSuffixesCollections;
+import model.simplemodel.SuffixesCollectionImpl;
+import model.simplemodel.suffixesdb.FromPredefinedSuffixesEnumSuffixesDbImpl;
+import model.simplemodel.suffixesdb.ISuffixesDb;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+/**
+ * Implementation of simplemodel's data.
+ *
+ * Does not represents any persistence...
+ *
+ * Loads predefined CollectionOfSuffixesCollection from existing ENUM
+ */
 public class ModelStaticDataImpl implements IModelStaticData {
 
     private static final String DEFAULT_OUTPUT_FOLDER_NAME = "OUTPUT";
@@ -33,7 +41,7 @@ public class ModelStaticDataImpl implements IModelStaticData {
     }
 
     private void initializeSuffixesDb() {
-        ISuffixesDb loader = new SuffixesDbImpl();
+        ISuffixesDb loader = new FromPredefinedSuffixesEnumSuffixesDbImpl();
         suffixesDb = loader.load();
     }
 
@@ -71,7 +79,7 @@ public class ModelStaticDataImpl implements IModelStaticData {
     }
 
     @Override
-    public @Nullable ISuffixesCollection getCurrentSuffixesCollection() {
+    public @NotNull ISuffixesCollection getCurrentSuffixesCollection() {
         return currentSuffixesCollection;
     }
 
@@ -82,11 +90,16 @@ public class ModelStaticDataImpl implements IModelStaticData {
 
     @Override
     public void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection) {
-        suffixesDb.addNewSuffixesCollection(newPredefinedSuffixesCollection);
+        suffixesDb.updateSuffixesCollectionOrAddNewOne(newPredefinedSuffixesCollection);
     }
 
     @Override
-    public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(String name) {
+    public void removePredefinedSuffixesCollection(@NotNull String name) {
+        suffixesDb.removeSuffixesCollectionIfExists(name);
+    }
+
+    @Override
+    public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name) {
         return suffixesDb.getSuffixesCollectionByName(name);
     }
 }

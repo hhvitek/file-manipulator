@@ -37,6 +37,11 @@ public interface ISuffixesCollection extends Iterable<String> {
      */
     void addSuffixes(String delimitedSuffixes, String delimiter);
 
+    /**
+     * Same ad addSuffixes(String, String = ",")
+     */
+    void addSuffixes(String delimitedSuffixes);
+
     String getName();
     boolean hasName(String anotherName);
 
@@ -54,4 +59,5 @@ public interface ISuffixesCollection extends Iterable<String> {
      * Returns String formatted such as the following example: "glob:**.{exe,bat,sh}"
      */
     String getFileGlobRegexFromSuffixes();
+
 }

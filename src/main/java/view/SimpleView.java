@@ -46,6 +46,11 @@ public class SimpleView implements IView {
     }
 
     @Override
+    public void refreshPredefinedSuffixesCollections() {
+        form.refreshPredefinedSuffixesCollections();
+    }
+
+    @Override
     public void errorOccurred(String errorMessage) {
         setStatusBar("ERROR: <" + errorMessage + ">");
     }

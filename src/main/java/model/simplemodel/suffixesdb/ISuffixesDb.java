@@ -1,5 +1,6 @@
-package model;
+package model.simplemodel.suffixesdb;
 
+import model.SuffixesDbException;
 import model.simplemodel.CollectionOfSuffixesCollections;
 
 /**

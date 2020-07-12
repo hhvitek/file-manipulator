@@ -28,7 +28,7 @@ public class SuffixesCollectionImpl implements ISuffixesCollection {
         name = stringAdditionalOperations.generateRandomAlphanumericString(0);
     }
 
-    public SuffixesCollectionImpl(String categoryName) {
+    public SuffixesCollectionImpl(@NotNull String categoryName) {
         suffixes = new ArrayList<>();
         name = categoryName;
     }
@@ -38,7 +38,7 @@ public class SuffixesCollectionImpl implements ISuffixesCollection {
     }
 
     @Override
-    public void addSuffix(String suffix) {
+    public void addSuffix(@NotNull String suffix) {
         if (suffix != null) {
             String trimmedSuffix = suffix.trim();
             if (!suffixes.contains(trimmedSuffix)) {
@@ -50,7 +50,7 @@ public class SuffixesCollectionImpl implements ISuffixesCollection {
     }
 
     @Override
-    public void addSuffixes(List<String> newSuffixes) {
+    public void addSuffixes(@NotNull List<String> newSuffixes) {
         newSuffixes.forEach(
                 this::addSuffix
         );
@@ -64,6 +64,11 @@ public class SuffixesCollectionImpl implements ISuffixesCollection {
         } catch (PatternSyntaxException e) {
             logger.error("Cannot split delimitedString <{}> using delimiter <{}>. Ignoring.", delimitedSuffixes, delimiter);
         }
+    }
+
+    @Override
+    public void addSuffixes(String delimitedSuffixes) {
+        addSuffixes(delimitedSuffixes, DELIMITER);
     }
 
     @Override
@@ -96,7 +101,7 @@ public class SuffixesCollectionImpl implements ISuffixesCollection {
     }
 
     @Override
-    public boolean hasName(String anotherName) {
+    public boolean hasName(@NotNull String anotherName) {
         return name.equalsIgnoreCase(anotherName);
     }
 

@@ -12,5 +12,6 @@ public interface IView extends IObserver {
     void setInputFolder(Path inputFolder);
     void setOutputFolder(Path outputFolder);
     void setStatusBar(String message);
+    void refreshPredefinedSuffixesCollections();
     void errorOccurred(String errorMessage);
 }

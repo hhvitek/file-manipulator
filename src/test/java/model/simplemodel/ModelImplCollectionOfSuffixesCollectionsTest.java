@@ -15,7 +15,7 @@ class ModelImplCollectionOfSuffixesCollectionsTest {
         assertEquals(expectedInitialSize, suffixesDb.size());
 
         ISuffixesCollection suffixesCollection = createTheFirstSuffixCollection();
-        suffixesDb.addNewSuffixesCollection(suffixesCollection);
+        suffixesDb.addNewSuffixesCollectionIfAbsent(suffixesCollection);
 
         assertEquals(expectedInitialSize + 1, suffixesDb.size());
     }
@@ -31,8 +31,8 @@ class ModelImplCollectionOfSuffixesCollectionsTest {
         int expectedSize = 1;
 
         ISuffixesCollection suffixesCollection = createTheFirstSuffixCollection();
-        suffixesDb.addNewSuffixesCollection(suffixesCollection);
-        suffixesDb.addNewSuffixesCollection(suffixesCollection);
+        suffixesDb.addNewSuffixesCollectionIfAbsent(suffixesCollection);
+        suffixesDb.addNewSuffixesCollectionIfAbsent(suffixesCollection);
 
         assertEquals(expectedSize, suffixesDb.size());
     }
@@ -41,13 +41,13 @@ class ModelImplCollectionOfSuffixesCollectionsTest {
     void iterationOverDbTest() {
 
         ISuffixesCollection suffixesCollection = createTheFirstSuffixCollection();
-        suffixesDb.addNewSuffixesCollection(suffixesCollection);
+        suffixesDb.addNewSuffixesCollectionIfAbsent(suffixesCollection);
 
         ISuffixesCollection suffixesCollection_2 = new SuffixesCollectionImpl("the second collection");
-        suffixesDb.addNewSuffixesCollection(suffixesCollection_2);
+        suffixesDb.addNewSuffixesCollectionIfAbsent(suffixesCollection_2);
 
         ISuffixesCollection suffixesCollection_3 = new SuffixesCollectionImpl("the third collection");
-        suffixesDb.addNewSuffixesCollection(suffixesCollection_3);
+        suffixesDb.addNewSuffixesCollectionIfAbsent(suffixesCollection_3);
 
         int iterationsExpected = 3;
         int iterationCounter = 0;

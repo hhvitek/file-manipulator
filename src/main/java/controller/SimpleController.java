@@ -6,6 +6,7 @@ import model.IModel;
 import model.ISuffixesCollection;
 import model.jobs.JobObserver;
 import model.simplemodel.SuffixesCollectionImpl;
+import org.jetbrains.annotations.NotNull;
 import view.IView;
 
 import java.nio.file.InvalidPathException;
@@ -67,19 +68,37 @@ public class SimpleController implements IController, JobObserver {
     }
 
     @Override
-    public void newSuffixesChosenByUser(String newSuffixes, String delimiter) {
-
-        ISuffixesCollection suffixesCollection;
-        if (newSuffixes != null && !newSuffixes.isEmpty()) {
-            suffixesCollection = new SuffixesCollectionImpl();
-            suffixesCollection.addSuffixes(newSuffixes, delimiter);
-        } else {
-            suffixesCollection = SuffixesCollectionImpl.getAllSuffixCollection();
-        }
+    public void newSuffixesChosenByUser(String name, String delimitedString, String delimiter) {
+        ISuffixesCollection suffixesCollection = createSuffixesCollectionFromNameAndDelimitedString(name, delimitedString, delimiter);
 
         model.setSuffixes(suffixesCollection);
         view.setSuffixes(suffixesCollection);
         view.setStatusBar("Suffixes have been set.");
+    }
+
+    private ISuffixesCollection createSuffixesCollectionFromNameAndDelimitedString(String name, String delimitedString, String delimiter) {
+        ISuffixesCollection suffixesCollection;
+        if (name == null) {
+            suffixesCollection = new SuffixesCollectionImpl();
+        } else {
+            suffixesCollection = new SuffixesCollectionImpl(name);
+        }
+
+        if (delimitedString != null && !delimitedString.isEmpty()) {
+            suffixesCollection.addSuffixes(delimitedString, delimiter);
+        } else {
+            suffixesCollection = SuffixesCollectionImpl.getAllSuffixCollection();
+        }
+        return suffixesCollection;
+    }
+
+    @Override
+    public void newSuffixesModifiedByUser(String name, String delimitedString, String delimiter) {
+        ISuffixesCollection suffixesCollection = createSuffixesCollectionFromNameAndDelimitedString(name, delimitedString, delimiter);
+
+        model.addNewPredefinedFileSuffixesCollection(suffixesCollection);
+
+        view.refreshPredefinedSuffixesCollections();
     }
 
     @Override
@@ -111,6 +130,12 @@ public class SimpleController implements IController, JobObserver {
     }
 
     @Override
+    public void removeSuffixesCollection(@NotNull String name) {
+        model.removePredefinedFileSuffixesCollection(name);
+        view.refreshPredefinedSuffixesCollections();
+    }
+
+    @Override
     public void createAndStartJob() {
         if (!haveModelAlreadyHaveJob()) {
             IJob createdJob = model.createJobAsyncWithDefaultParameters();
@@ -130,6 +155,11 @@ public class SimpleController implements IController, JobObserver {
     public void stopAll() {
         modelJobManager.stopAll();
         view.setStatusBar("All tasks have been stopped");
+    }
+
+    @Override
+    public void storeAllToPersistentStorage() {
+        model.storeAll();
     }
 
     @Override

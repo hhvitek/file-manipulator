@@ -1,0 +1,8 @@
+# This file represents file suffixes collections
+# name|suffix1,suffix2,suffix3
+# COLUMN_SEPARATOR = "||"
+# SUFFIX_SEPARATOR = ","
+
+AUDIO||mp3,mpa,ogg
+VIDEO||mp4,avi,webm
+MY_LIST||txt,out

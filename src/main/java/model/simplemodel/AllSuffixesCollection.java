@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Represents ALL possible (and impossible) suffixes. Could be used in place of SuffixesCollectionImpl...
+ */
 public class AllSuffixesCollection extends SuffixesCollectionImpl {
 
     private static final String name = "ALL";
@@ -32,7 +35,7 @@ public class AllSuffixesCollection extends SuffixesCollectionImpl {
 
     @Override
     public boolean hasName(String anotherName) {
-        return true;
+        return anotherName != null && anotherName.equalsIgnoreCase(name);
     }
 
     @Override
@@ -55,4 +58,5 @@ public class AllSuffixesCollection extends SuffixesCollectionImpl {
     public Iterator<String> iterator() {
         return Collections.emptyIterator();
     }
+
 }

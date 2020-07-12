@@ -1,8 +1,8 @@
-package model;
+package model.simplemodel.staticdata;
 
+import model.ISuffixesCollection;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -16,8 +16,9 @@ public interface IModelStaticData {
     @NotNull Path getOutputFolder();
 
     void setCurrentSuffixesCollection(@NotNull ISuffixesCollection newSuffixesCollection);
-    @Nullable ISuffixesCollection getCurrentSuffixesCollection();
+    @NotNull ISuffixesCollection getCurrentSuffixesCollection();
     CollectionOfSuffixesCollections getSuffixesDb();
     void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection);
-    Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(String name);
+    void removePredefinedSuffixesCollection(@NotNull String name);
+    Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name);
 }

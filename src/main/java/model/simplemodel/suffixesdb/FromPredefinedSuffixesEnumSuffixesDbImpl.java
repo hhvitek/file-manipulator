@@ -1,20 +1,25 @@
-package model.simplemodel;
+package model.simplemodel.suffixesdb;
 
-import model.ISuffixesDb;
 import model.SuffixesDbException;
+import model.simplemodel.CollectionOfSuffixesCollections;
+import model.simplemodel.PredefinedSuffixesEnum;
 
-public class SuffixesDbImpl implements ISuffixesDb {
+/**
+ * Just process already existing Enum class...
+ * Cannot store changes...
+ */
+public class FromPredefinedSuffixesEnumSuffixesDbImpl implements ISuffixesDb {
 
     private final CollectionOfSuffixesCollections categoriesDb;
 
-    public SuffixesDbImpl() {
+    public FromPredefinedSuffixesEnumSuffixesDbImpl() {
         categoriesDb = new CollectionOfSuffixesCollections();
         loadAllKnownPredefinedSuffixesFromEnum();
     }
 
     private void loadAllKnownPredefinedSuffixesFromEnum() {
         for(PredefinedSuffixesEnum value: PredefinedSuffixesEnum.values()) {
-            categoriesDb.addNewSuffixesCollection(value.getSuffixes());
+            categoriesDb.addNewSuffixesCollectionIfAbsent(value.getSuffixes());
         }
     }
 

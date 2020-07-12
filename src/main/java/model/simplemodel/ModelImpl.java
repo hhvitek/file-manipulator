@@ -1,13 +1,14 @@
 package model.simplemodel;
 
 import model.IModel;
-import model.IModelStaticData;
 import model.ISuffixesCollection;
 import model.file_operations.FileOperationEnum;
 import model.jobs.IJob;
 import model.jobs.IJobManager;
 import model.jobs.JobImpl;
 import model.jobs.JobManagerImpl;
+import model.simplemodel.staticdata.IModelStaticData;
+import model.simplemodel.staticdata.jpa.ModelStaticDataJpaImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -24,7 +25,7 @@ public class ModelImpl implements IModel {
     private FileOperationEnum fileOperationEnum;
 
     public ModelImpl() {
-        staticData = new ModelStaticDataImpl();
+        staticData = new ModelStaticDataJpaImpl();
         jobManager = new JobManagerImpl();
         fileOperationEnum = FileOperationEnum.COPY;
     }
@@ -106,7 +107,17 @@ public class ModelImpl implements IModel {
     }
 
     @Override
+    public void removePredefinedFileSuffixesCollection(@NotNull String name) {
+        staticData.removePredefinedSuffixesCollection(name);
+    }
+
+    @Override
     public Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(@NotNull String name) {
         return staticData.getPredefinedSuffixesCollectionByName(name);
+    }
+
+    @Override
+    public void storeAll() {
+        throw new UnsupportedOperationException();
     }
 }

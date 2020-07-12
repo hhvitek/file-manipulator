@@ -39,6 +39,14 @@ public class MainForm {
     private JComboBox comboBoxChoosePredefinedFileSuffixes;
     private JPanel panelOperations;
     private JComboBox comboBoxFileOperations;
+    private JTextField textFieldName;
+    private JLabel labelName;
+    private JLabel labelCategories;
+    private JButton buttonAddSuffixesCategory;
+    private JButton buttonDeleteSuffixesCategory;
+    private JLabel labelSuffixes;
+    private JPanel panelInnerSuffixesControls;
+    private JButton buttonDeleteAll;
 
 
     //################CUSTOM VARIABLES
@@ -63,15 +71,14 @@ public class MainForm {
         this.model = model;
         this.controller = controller;
 
-        swingFrame = mainFormUtility.createMainForm();
-        swingFrame.setContentPane(panelMainForm);
+        swingFrame = mainFormUtility.createMainForm(panelMainForm);
 
         buttonInputFolderChoose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 Optional<Path> optionalFile = mainFormUtility.showFileChooserAndGetFolder(model.getInputFolder());
                 optionalFile.ifPresent(
-                        file -> newInputFolderChosenByUser(optionalFile.get().toString())
+                        file -> controller.newInputFolderChosenByUser(optionalFile.get().toString())
                 );
             }
         });
@@ -80,7 +87,7 @@ public class MainForm {
             public void actionPerformed(ActionEvent actionEvent) {
                 Optional<Path> optionalFile = mainFormUtility.showFileChooserAndGetFolder(model.getOutputFolder());
                 if (optionalFile.isPresent()) {
-                    newOutputFolderChosenByUser(optionalFile.get().toString());
+                    controller.newOutputFolderChosenByUser(optionalFile.get().toString());
                 }
             }
         });
@@ -114,6 +121,7 @@ public class MainForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 storeAllToModel();
+                controller.storeAllToPersistentStorage();
                 setStatusBarMessage("Stored successfully");
             }
         });
@@ -135,6 +143,29 @@ public class MainForm {
                 }
             }
         });
+        buttonAddSuffixesCategory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = textFieldName.getText();
+                String delimitedString = textFieldFileSuffixes.getText();
+                addNewSuffixesCategory(name, delimitedString);
+            }
+        });
+        buttonDeleteAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String suffixesCollectionName = textFieldName.getText();
+                controller.removeSuffixesCollection(suffixesCollectionName);
+            }
+        });
+
+        buttonDeleteSuffixesCategory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String suffixesCollectionName = textFieldName.getText();
+                controller.removeSuffixesCollection(suffixesCollectionName);
+            }
+        });
     }
 
     /**
@@ -148,8 +179,7 @@ public class MainForm {
                 fillPredefinedSuffixes();
                 fillSupportedFileOperations();
 
-                swingFrame.pack();
-                swingFrame.setVisible(true);
+                mainFormUtility.packAndShow();
             }
         });
     }
@@ -161,26 +191,13 @@ public class MainForm {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                swingFrame.setVisible(false);
-                swingFrame.dispose();
+                mainFormUtility.unvisibleAndDispose();
             }
         });
     }
 
     public void setStatusBarMessage(String message) {
         labelStatusBarStatusText.setText(message);
-    }
-
-    private void newInputFolderChosenByUser(String newInputFolder) {
-        controller.newInputFolderChosenByUser(newInputFolder);
-    }
-
-    private void newOutputFolderChosenByUser(String newOutputFolder) {
-        controller.newOutputFolderChosenByUser(newOutputFolder);
-    }
-
-    private void newSuffixesChosenByUser(String newSuffixes) {
-        controller.newSuffixesChosenByUser(newSuffixes, SUFFIXES_DELIMITER);
     }
 
     private void newPredefinedSuffixesChosenByUser(String newSuffixesCategoryName) {
@@ -195,9 +212,16 @@ public class MainForm {
         folderTextField.setText(newFolder.toString());
     }
 
+    private void addNewSuffixesCategory(String name, String delimitedString) {
+        controller.newSuffixesModifiedByUser(name, delimitedString, SUFFIXES_DELIMITER);
+    }
+
     public void setSuffixes(ISuffixesCollection suffixes) {
         textFieldFileSuffixes.setText(
                 suffixes.getSuffixesAsDelimitedString(SUFFIXES_JOINER_STRING)
+        );
+        textFieldName.setText(
+                suffixes.getName()
         );
     }
 
@@ -208,6 +232,20 @@ public class MainForm {
     public void setOutputFolder(Path newOutputFolder) {
         setFolder(textFieldOutputFolder, newOutputFolder);
     }
+
+    public void refreshPredefinedSuffixesCollections() {
+        String selectedItem = textFieldName.getText();
+        comboBoxChoosePredefinedFileSuffixes.removeAllItems();
+        fillPredefinedSuffixes();
+        selectPredefinedSuffix(selectedItem);
+    }
+
+    private void selectPredefinedSuffix(String selectedItem) {
+        if (selectedItem != null) {
+            comboBoxChoosePredefinedFileSuffixes.setSelectedItem(selectedItem);
+        }
+    }
+
 
     private void fillPredefinedSuffixes() {
         for(ISuffixesCollection predefinedCategory: model.getPredefinedFileSuffixesDb()) {
@@ -230,14 +268,16 @@ public class MainForm {
     }
 
     private void storeAllToModel() {
-        newInputFolderChosenByUser(textFieldInputFolder.getText());
-        newOutputFolderChosenByUser(textFieldOutputFolder.getText());
+        controller.newInputFolderChosenByUser(textFieldInputFolder.getText());
+        controller.newOutputFolderChosenByUser(textFieldOutputFolder.getText());
 
         Object selectedItem = comboBoxFileOperations.getSelectedItem();
         if (Objects.nonNull(selectedItem)) {
             newFileOperationChosenByUser(selectedItem.toString());
         }
 
-        newSuffixesChosenByUser(textFieldFileSuffixes.getText());
+        newPredefinedSuffixesChosenByUser(textFieldFileSuffixes.getText());
     }
+
+
 }

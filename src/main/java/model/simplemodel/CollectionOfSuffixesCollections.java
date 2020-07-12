@@ -2,14 +2,10 @@ package model.simplemodel;
 
 import model.ISuffixesCollection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents collection/database/list of ISuffixesCollection (collection of suffixes)
@@ -27,31 +23,52 @@ public class CollectionOfSuffixesCollections implements Iterable<ISuffixesCollec
 
     private static final Logger logger = LoggerFactory.getLogger(CollectionOfSuffixesCollections.class);
 
-    private final List<ISuffixesCollection> suffixesCollections;
+    private String name = "";
+
+    private final Map<String,ISuffixesCollection> suffixesCollections;
 
     public CollectionOfSuffixesCollections() {
-        suffixesCollections = new ArrayList<>();
+        suffixesCollections = new HashMap<>();
     }
 
-    public void addNewSuffixesCollection(@Nullable ISuffixesCollection newSuffixesCollection) {
-        if (!suffixesCollections.contains(newSuffixesCollection)) {
-            suffixesCollections.add(newSuffixesCollection);
+    public CollectionOfSuffixesCollections(@NotNull String name) {
+        this();
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Add new ISuffixesCollection if it is not already present (Optional operation).
+     */
+    public void addNewSuffixesCollectionIfAbsent(@NotNull ISuffixesCollection newSuffixesCollection) {
+        String name = newSuffixesCollection.getName();
+        suffixesCollections.putIfAbsent(name, newSuffixesCollection);
+    }
+
+    /**
+     * If the ISuffixesCollection is already present in a collection, this method behaves same as
+     * addNewSuffixesCollectionIfAbsent().
+     * Otherwise it just updates its suffixes list according to the modifiedSuffixesCollection.
+     */
+    public void updateSuffixesCollectionOrAddNewOne(@NotNull ISuffixesCollection modifiedSuffixesCollection) {
+        String name = modifiedSuffixesCollection.getName();
+        suffixesCollections.put(name, modifiedSuffixesCollection);
+    }
+
+    public void removeSuffixesCollectionIfExists(@NotNull String name) {
+        suffixesCollections.remove(name);
+    }
+
+    public Optional<ISuffixesCollection> getSuffixesCollectionByName(@NotNull String name) {
+        ISuffixesCollection suffixesCollection = suffixesCollections.get(name);
+        if(suffixesCollection != null) {
+            return Optional.of(suffixesCollection);
         } else {
-            logger.warn(
-                    "This suffixes collection <{}> is already in this Db <{}>. Ignoring.",
-                    newSuffixesCollection,
-                    this
-            );
+            return Optional.empty();
         }
-    }
-
-    public Optional<ISuffixesCollection> getSuffixesCollectionByName(String name) {
-        for(ISuffixesCollection suffixesCollection: suffixesCollections) {
-            if (suffixesCollection.hasName(name)) {
-                return Optional.of(suffixesCollection);
-            }
-        }
-        return Optional.empty();
     }
 
     public int size() {
@@ -62,13 +79,13 @@ public class CollectionOfSuffixesCollections implements Iterable<ISuffixesCollec
         return size() == 0;
     }
 
-    public ISuffixesCollection getFirst() throws IndexOutOfBoundsException {
-        return suffixesCollections.get(0);
+    public ISuffixesCollection getFirst() throws NoSuchElementException {
+        return iterator().next();
     }
 
     @NotNull
     @Override
     public Iterator<ISuffixesCollection> iterator() {
-        return suffixesCollections.iterator();
+        return suffixesCollections.values().iterator();
     }
 }
