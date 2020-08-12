@@ -1,17 +1,25 @@
 package controller;
 
 import org.jetbrains.annotations.NotNull;
+import view.AbstractView;
 
 public interface ISupportedActionsForViewByController {
 
+    void setView(AbstractView view);
+    void exitApplication();
+
     void newInputFolderChosenByUser(String newInputFolder);
     void newOutputFolderChosenByUser(String newOutputFolder);
-    void newSuffixesChosenByUser(String name, String delimitedString, String delimiter);
     void newSuffixesModifiedByUser(String name, String delimitedString, String delimiter);
     void newPredefinedSuffixesChosenByUser(String categoryName);
     void newFileOperationChosenByUser(String operationName);
     void removeSuffixesCollection(@NotNull String name);
+
     void createAndStartJob();
     void stopAll();
-    void storeAllToPersistentStorage();
+
+    /**
+     * wait for relevant event to receive an answer.
+     */
+    void countRelevantFilesInInputFolder();
 }

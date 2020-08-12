@@ -1,6 +1,7 @@
 package model.simplemodel.staticdata;
 
 import model.ISuffixesCollection;
+import model.file_operations.FileOperationEnum;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import model.simplemodel.SuffixesCollectionImpl;
 import model.simplemodel.suffixesdb.FromPredefinedSuffixesEnumSuffixesDbImpl;
@@ -28,11 +29,15 @@ public class ModelStaticDataImpl implements IModelStaticData {
     private CollectionOfSuffixesCollections suffixesDb;
     private ISuffixesCollection currentSuffixesCollection;
 
+    private FileOperationEnum currentFileOperation;
+
     public ModelStaticDataImpl() {
         inputFolder = getCurrentWorkingFolder();
         outputFolder = inputFolder.resolve(DEFAULT_OUTPUT_FOLDER_NAME);
         initializeSuffixesDb();
         initializeCurrentSuffixes(suffixesDb);
+
+        this.currentFileOperation = FileOperationEnum.COPY;
     }
 
     private static Path getCurrentWorkingFolder() {
@@ -101,5 +106,15 @@ public class ModelStaticDataImpl implements IModelStaticData {
     @Override
     public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name) {
         return suffixesDb.getSuffixesCollectionByName(name);
+    }
+
+    @Override
+    public @NotNull FileOperationEnum getCurrentOperation() {
+        return currentFileOperation;
+    }
+
+    @Override
+    public void setCurrentOperation(@NotNull FileOperationEnum newOperation) {
+        currentFileOperation = newOperation;
     }
 }

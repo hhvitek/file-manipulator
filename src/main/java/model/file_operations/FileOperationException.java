@@ -10,8 +10,13 @@ public class FileOperationException extends Exception {
         fileOperationErrorsEnum = error;
     }
 
+    public FileOperationException(FileOperationErrorsEnum error, String message, Throwable throwable) {
+        super(message, throwable);
+        fileOperationErrorsEnum = error;
+    }
+
     @Override
     public String toString() {
-        return fileOperationErrorsEnum + getLocalizedMessage();
+        return fileOperationErrorsEnum + ": " + getLocalizedMessage();
     }
 }

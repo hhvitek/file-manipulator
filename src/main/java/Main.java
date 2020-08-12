@@ -1,14 +1,15 @@
-import controller.IController;
+import controller.AbstractController;
+import controller.ISupportedActionsForViewByController;
 import controller.SimpleController;
-import model.IModel;
+import model.Model;
 import model.simplemodel.ModelImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import view.IView;
-import view.SimpleView;
+import view.AbstractView;
+import view.MainForm;
+import view.SwingViewUtils;
 
 import javax.swing.*;
-import java.awt.*;
 
 public final class Main {
 
@@ -22,13 +23,16 @@ public final class Main {
 
         logger.info("Application started.");
 
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        setUIFont(new javax.swing.plaf.FontUIResource("Segoe UI", Font.PLAIN, 14));
+        SwingViewUtils.setLookAndFeelToSystemDefault();
+        SwingViewUtils.setDefaultFont();
 
-        IModel model = new ModelImpl();
-        IController controller = new SimpleController(model);
-        IView view = new SimpleView(model, controller);
-        view.createView();
+        Model model = new ModelImpl();
+
+        AbstractController controller = new SimpleController(model);
+        AbstractView view = new MainForm(model, (ISupportedActionsForViewByController)controller);
+        controller.addView(view);
+
+        view.startView();
     }
 
 

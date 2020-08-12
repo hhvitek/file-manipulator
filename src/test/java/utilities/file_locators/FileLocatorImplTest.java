@@ -1,4 +1,4 @@
-package model.jobs.file_locators;
+package utilities.file_locators;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,19 +7,18 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 import java.util.List;
 
-class FileLocatorApacheCommonsTest extends FileLocatorTest{
+class FileLocatorImplTest extends FileLocatorTest {
 
     @BeforeEach
     void init() {
-        locator = new FileLocatorApacheCommons();
+        locator = new FileLocatorImpl();
     }
 
     @Test
-    @Override
     void listAllFilesTest() {
         int expectedFoundFiles = 8;
 
-        List<Path> foundFiles = locator.findUsingRegex(rootFolder, "*");
+        List<Path> foundFiles = locator.findUsingRegex(rootFolder, "glob:*");
         int actualFoundFiles = foundFiles.size();
 
         Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);

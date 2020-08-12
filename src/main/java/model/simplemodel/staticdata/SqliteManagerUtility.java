@@ -1,6 +1,7 @@
 package model.simplemodel.staticdata;
 
 import model.ISuffixesCollection;
+import model.file_operations.FileOperationEnum;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import model.simplemodel.SuffixesCollectionImpl;
 import model.simplemodel.suffixesdb.DbConnectionErrorException;
@@ -146,6 +147,16 @@ public class SqliteManagerUtility implements IModelStaticData {
         } catch (SQLException ex) {
             throw new DbConnectionErrorException("SqlException error during working with DB", ex);
         }
+    }
+
+    @Override
+    public @NotNull FileOperationEnum getCurrentOperation() {
+        throw new UnsupportedOperationException("This operation is not supported.");
+    }
+
+    @Override
+    public void setCurrentOperation(@NotNull FileOperationEnum newOperation) {
+        throw new UnsupportedOperationException("This operation is not supported.");
     }
 
     private ISuffixesCollection getSuffixesCollectionFromResultSet(ResultSet rs) throws SQLException {

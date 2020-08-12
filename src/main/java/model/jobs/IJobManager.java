@@ -13,11 +13,11 @@ import java.util.Optional;
  */
 public interface IJobManager {
     int createJob(Path inputFolder, Path outputFolder, ISuffixesCollection suffixes, IFileOperation fileOperation);
-    void appendJob(IJob newJob);
+    void appendJob(Job newJob);
     void stopJobIfExists(int jobId);
 
-    List<IJob> getJobs();
-    Optional<IJob> getJobById(int id);
+    List<Job> getJobs();
+    Optional<Job> getJobById(int id);
 
     void stopAll();
     void cancelAll();
@@ -25,4 +25,10 @@ public interface IJobManager {
 
     boolean isRunning(int jobId);
     boolean isFinished(int jobId);
+
+    /**
+     * Whether a new job is executed immediately or it has to wait for free resources.
+     * @return true if it has to wait.
+     */
+    boolean isJobManagerBusy();
 }

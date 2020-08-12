@@ -1,4 +1,4 @@
-package model.jobs.file_locators;
+package utilities.file_locators;
 
 import model.ISuffixesCollection;
 import model.simplemodel.SuffixesCollectionImpl;

@@ -15,7 +15,6 @@
 
         <junit.jupiter.version>5.6.2</junit.jupiter.version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
-        <umldoclet-version>2.0.9</umldoclet-version>
         <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
         <org.apache.logging.log4j.version>2.13.3</org.apache.logging.log4j.version>
         <org.slf4j.version>1.7.30</org.slf4j.version>
@@ -79,14 +78,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.32.3</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/nl.talsmasoftware/umldoclet -->
-        <dependency>
-            <groupId>nl.talsmasoftware</groupId>
-            <artifactId>umldoclet</artifactId>
-            <version>${umldoclet-version}</version>
+            <version>3.32.3.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
@@ -121,31 +113,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin-version}</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>nl.talsmasoftware</groupId>
-                                <artifactId>umldoclet</artifactId>
-                                <version>${umldoclet-version}</version>
-                            </docletArtifact>
-                            <additionalOptions>
-                                <additionalOption>-Xdoclint:-missing</additionalOption>
-                            </additionalOptions>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
         </plugins>

@@ -11,8 +11,8 @@ import java.util.concurrent.Future;
 
 public class JobManagerImpl implements IJobManager {
 
-    private final Map<Integer, IJob> jobs;
-    private final Map<Integer, Future<IJob>> jobTasks;
+    private final Map<Integer, Job> jobs;
+    private final Map<Integer, Future<Job>> jobTasks;
 
     private final ExecutorService executor;
 
@@ -24,34 +24,34 @@ public class JobManagerImpl implements IJobManager {
 
     @Override
     public int createJob(Path inputFolder, Path outputFolder, ISuffixesCollection suffixes, IFileOperation fileOperation) {
-        IJob newJob = new JobImpl(inputFolder, outputFolder, suffixes, fileOperation);
+        Job newJob = new JobImpl(inputFolder, outputFolder, suffixes, fileOperation);
         appendJob(newJob);
         return newJob.getId();
     }
 
-    public void appendJob(IJob newJob) {
+    public void appendJob(Job newJob) {
         jobs.put(newJob.getId(), newJob);
         createNewJobTask(newJob);
     }
 
-    private void createNewJobTask(IJob job) {
+    private void createNewJobTask(Job job) {
         Runnable runnableJob = job::start;
         Future future = executor.submit(runnableJob);
         jobTasks.put(job.getId(), future);
     }
 
     @Override
-    public List<IJob> getJobs() {
-        List<IJob> jobs = getListFromCollection(this.jobs.values());
+    public List<Job> getJobs() {
+        List<Job> jobs = getListFromCollection(this.jobs.values());
         return Collections.unmodifiableList(jobs);
     }
 
-    private List<IJob> getListFromCollection(Collection<IJob> collection) {
+    private List<Job> getListFromCollection(Collection<Job> collection) {
         return new ArrayList<>(collection);
     }
 
     @Override
-    public Optional<IJob> getJobById(int id) {
+    public Optional<Job> getJobById(int id) {
         if (jobs.containsKey(id)) {
             return Optional.of(jobs.get(id));
         }
@@ -60,14 +60,14 @@ public class JobManagerImpl implements IJobManager {
 
     @Override
     public void stopJobIfExists(int jobId) {
-        Optional<IJob> job = getJobById(jobId);
-        job.ifPresent(IJob::stop);
+        Optional<Job> job = getJobById(jobId);
+        job.ifPresent(Job::stop);
     }
 
     @Override
     public void stopAll() {
         jobs.values().forEach(
-                IJob::stop
+                Job::stop
         );
     }
 
@@ -87,7 +87,7 @@ public class JobManagerImpl implements IJobManager {
 
     @Override
     public boolean isRunning(int jobId) {
-        Optional<IJob> job = getJobById(jobId);
+        Optional<Job> job = getJobById(jobId);
         if (job.isPresent()) {
             return job.get().isRunning();
         } else {
@@ -97,11 +97,18 @@ public class JobManagerImpl implements IJobManager {
 
     @Override
     public boolean isFinished(int jobId) {
-        Optional<IJob> foundJob = getJobById(jobId);
+        Optional<Job> foundJob = getJobById(jobId);
         if (foundJob.isPresent()) {
             return foundJob.get().isFinished();
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean isJobManagerBusy() {
+        return jobTasks.values().stream().anyMatch(
+                jobFuture -> jobFuture.isDone() == false
+        );
     }
 }

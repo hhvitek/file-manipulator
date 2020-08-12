@@ -32,30 +32,8 @@ public class MainFormUtility {
         return Optional.empty();
     }
 
-    public void packAndShow() {
-        mainForm.pack();
-        setCenteredToGoldenRatio(mainForm);
-        mainForm.setVisible(true);
-    }
-
     public void unvisibleAndDispose() {
         mainForm.setVisible(false);
         mainForm.dispose();
-    }
-
-    /**
-     * Callable after swing frame.pack() function to center application window.
-     */
-    public static void setCenteredToGoldenRatio(JFrame frame) {
-        Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenHeight = (int) screenDimension.getHeight();
-        int screenWidth = (int) screenDimension.getWidth();
-
-        int frameHeight = frame.getHeight();
-        int frameWidth = frame.getWidth();
-
-        int goldenRatioHeight = (int) ((screenHeight - frameHeight) * 0.38);
-
-        frame.setLocation((screenWidth / 2) - (frameWidth / 2), goldenRatioHeight);
     }
 }

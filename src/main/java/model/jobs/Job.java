@@ -1,5 +1,7 @@
 package model.jobs;
 
+import model.AbstractObservableModel;
+
 /**
  * The Job. Represents an Operation.
  * start() starts the Operation sequentially.
@@ -8,11 +10,10 @@ package model.jobs;
  *        E.g. Let's define the Operation as copying many files. If the current file which is being copied is very large
  *        (several dozens GB), the Operation may stops only after copying is finished.
  */
-public interface IJob extends JobObservable {
-    int getId();
-    boolean isRunning();
-    boolean isStarted();
-    boolean isFinished();
-    void start();
-    void stop();
+public abstract class Job extends AbstractObservableModel {
+    public abstract int getId();
+    public abstract boolean isRunning();
+    public abstract boolean isFinished();
+    public abstract void start();
+    public abstract void stop();
 }

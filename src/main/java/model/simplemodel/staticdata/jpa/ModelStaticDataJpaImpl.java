@@ -1,6 +1,7 @@
 package model.simplemodel.staticdata.jpa;
 
 import model.ISuffixesCollection;
+import model.file_operations.FileOperationEnum;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import model.simplemodel.staticdata.IModelStaticData;
 import model.simplemodel.staticdata.jpa.dboperations.CollectionOperation;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.OperationNotSupportedException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -179,5 +181,15 @@ public class ModelStaticDataJpaImpl implements IModelStaticData {
         } catch (ElemNotFoundException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public @NotNull FileOperationEnum getCurrentOperation() {
+        throw new UnsupportedOperationException("This operation is not supported.");
+    }
+
+    @Override
+    public void setCurrentOperation(@NotNull FileOperationEnum newOperation) {
+        throw new UnsupportedOperationException("This operation is not supported.");
     }
 }

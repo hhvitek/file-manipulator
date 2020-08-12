@@ -1,38 +1,57 @@
 package model.simplemodel;
 
-import model.IModel;
 import model.ISuffixesCollection;
+import model.Model;
 import model.file_operations.FileOperationEnum;
-import model.jobs.IJob;
 import model.jobs.IJobManager;
+import model.jobs.Job;
 import model.jobs.JobImpl;
 import model.jobs.JobManagerImpl;
 import model.simplemodel.staticdata.IModelStaticData;
-import model.simplemodel.staticdata.jpa.ModelStaticDataJpaImpl;
+import model.simplemodel.staticdata.ModelStaticDataImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import utilities.file_locators.FileLocatorImpl;
+import utilities.file_locators.IFileLocator;
+import utilities.file_locators.LocateFilesAsync;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ModelImpl implements IModel {
+import static model.ModelObservableEvents.*;
+
+public class ModelImpl extends Model implements PropertyChangeListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(ModelImpl.class);
+
     private final IJobManager jobManager;
 
     private final IModelStaticData staticData;
 
-    private FileOperationEnum fileOperationEnum;
+    private final LocateFilesAsync locateFilesAsync;
 
     public ModelImpl() {
-        staticData = new ModelStaticDataJpaImpl();
+        staticData = new ModelStaticDataImpl();
         jobManager = new JobManagerImpl();
-        fileOperationEnum = FileOperationEnum.COPY;
+        locateFilesAsync = new LocateFilesAsync();
+        locateFilesAsync.addPropertyChangeListener(this);
     }
 
     @Override
     public void setInputFolder(@NotNull Path newInputFolder) {
+
+        Path oldInputFolder = staticData.getInputFolder();
         staticData.setInputFolder(newInputFolder);
+
+        logger.debug("InputFolder changed: <{}> -> <{}>", oldInputFolder, newInputFolder);
+        firePropertyChange(INPUT_FOLDER_CHANGED, oldInputFolder, newInputFolder);
     }
 
     @Override
@@ -42,7 +61,12 @@ public class ModelImpl implements IModel {
 
     @Override
     public void setOutputFolder(@NotNull Path newOutputFolder) {
+
+        Path oldOutputFolder = staticData.getOutputFolder();
         staticData.setOutputFolder(newOutputFolder);
+
+        logger.debug("OutputFolder changed: <{}> -> <{}>", oldOutputFolder, newOutputFolder);
+        firePropertyChange(OUTPUT_FOLDER_CHANGED, oldOutputFolder, newOutputFolder);
     }
 
     @Override
@@ -52,7 +76,11 @@ public class ModelImpl implements IModel {
 
     @Override
     public void setSuffixes(@NotNull ISuffixesCollection newSuffixes) {
+
         staticData.setCurrentSuffixesCollection(newSuffixes);
+
+        logger.debug("Suffixes changed: <{}>", newSuffixes);
+        firePropertyChange(SELECTED_SUFFIXES_COLLECTION_CHANGED, newSuffixes.getName(), newSuffixes);
     }
 
     @Override
@@ -70,7 +98,13 @@ public class ModelImpl implements IModel {
 
     @Override
     public void setOperation(@NotNull String operationName) throws IllegalArgumentException {
-        fileOperationEnum = FileOperationEnum.valueOf(operationName);
+
+        FileOperationEnum newOperation = FileOperationEnum.valueOf(operationName);
+        FileOperationEnum oldOperation = staticData.getCurrentOperation();
+        staticData.setCurrentOperation(newOperation);
+
+        logger.debug("Operation changed: <{}> -> <{}>", oldOperation, newOperation);
+        firePropertyChange(OPERATION_CHANGED, oldOperation, newOperation);
     }
 
     @Override
@@ -79,19 +113,27 @@ public class ModelImpl implements IModel {
     }
 
     @Override
-    public IJob createJobSyncWithDefaultParameters() {
-        IJob newJob = new JobImpl(
+    public Job createJobSyncWithDefaultParameters() {
+        Job newJob = new JobImpl(
                 getInputFolder(),
                 getOutputFolder(),
                 getSuffixes(),
-                fileOperationEnum.getFileOperationInstance()
+                staticData.getCurrentOperation().getFileOperationInstance()
         );
         return newJob;
     }
 
     @Override
-    public IJob createJobAsyncWithDefaultParameters() {
-        IJob newJob = createJobSyncWithDefaultParameters();
+    public Job createJobAsyncWithDefaultParameters() {
+        return createJobAsyncWithDefaultParameters(null);
+    }
+
+    @Override
+    public @NotNull Job createJobAsyncWithDefaultParameters(@Nullable PropertyChangeListener listener) {
+        Job newJob = createJobSyncWithDefaultParameters();
+        if (listener != null) {
+            newJob.addPropertyChangeListener(listener);
+        }
         jobManager.appendJob(newJob);
         return newJob;
     }
@@ -104,11 +146,17 @@ public class ModelImpl implements IModel {
     @Override
     public void addNewPredefinedFileSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection) {
         staticData.addNewPredefinedSuffixesCollection(newPredefinedSuffixesCollection);
+
+        logger.debug("New suffixes added: <{}>", newPredefinedSuffixesCollection.getName());
+        firePropertyChange(NEW_SUFFIXES_COLLECTION_ADDED, newPredefinedSuffixesCollection.getName(), newPredefinedSuffixesCollection);
     }
 
     @Override
     public void removePredefinedFileSuffixesCollection(@NotNull String name) {
         staticData.removePredefinedSuffixesCollection(name);
+
+        logger.debug("Suffixes removed: <{}>", name);
+        firePropertyChange(SUFFIXES_COLLECTION_DELETED, name, -0);
     }
 
     @Override
@@ -118,6 +166,23 @@ public class ModelImpl implements IModel {
 
     @Override
     public void storeAll() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("This operation is not supported.");
+    }
+
+    @Override
+    public void countRelevantFilesInInputFolder() {
+        IFileLocator fileLocator = new FileLocatorImpl();
+        fileLocator.setRootFolder(getInputFolder());
+        fileLocator.setSuffixesCollection(getSuffixes());
+
+        locateFilesAsync.locate(fileLocator);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String eventName = evt.getPropertyName();
+        if(eventName.equalsIgnoreCase("SEARCH_FINISHED")) {
+            firePropertyChange(COUNTING_RELEVANT_FILES_FINISHED, evt.getOldValue(), evt.getNewValue());
+        }
     }
 }

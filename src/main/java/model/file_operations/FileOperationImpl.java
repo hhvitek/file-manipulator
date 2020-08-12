@@ -19,7 +19,7 @@ public class FileOperationImpl implements FileOperation {
         } catch (IOException e) {
             throw new FileOperationException(
                     FileOperationErrorsEnum.IO_OPERATION_ERROR,
-                    e.getLocalizedMessage()
+                    e.toString()
             );
         }
     }
@@ -35,7 +35,7 @@ public class FileOperationImpl implements FileOperation {
         try {
             Files.createDirectory(folder);
         } catch (IOException e) {
-            throw new FileOperationException(FileOperationErrorsEnum.CANNOT_CREATE_FILE, "Failed to create folder: " + folder);
+            throw new FileOperationException(FileOperationErrorsEnum.CANNOT_CREATE_FILE, "Failed to create folder: " + folder, e);
         }
     }
 
@@ -50,7 +50,7 @@ public class FileOperationImpl implements FileOperation {
         try {
             FileUtils.moveFile(what.toFile(), to.toFile());
         } catch (IOException e) {
-            throw new FileOperationException(FileOperationErrorsEnum.IO_OPERATION_ERROR, e.getLocalizedMessage());
+            throw new FileOperationException(FileOperationErrorsEnum.IO_OPERATION_ERROR, e.toString());
         }
     }
 
@@ -61,7 +61,7 @@ public class FileOperationImpl implements FileOperation {
                     .map(Path::toFile)
                     .forEach(File::delete);
         } catch (IOException e) {
-            throw new FileOperationException(FileOperationErrorsEnum.CANNOT_DELETE_FILE, "Failed to fully delete folder: " + what);
+            throw new FileOperationException(FileOperationErrorsEnum.CANNOT_DELETE_FILE, "Failed to fully delete folder: " + what, e);
         }
     }
 }

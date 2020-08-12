@@ -1,6 +1,7 @@
 package model.simplemodel.staticdata;
 
 import model.ISuffixesCollection;
+import model.file_operations.FileOperationEnum;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,5 +72,15 @@ public class ModelStaticDataSqliteImpl implements IModelStaticData {
     @Override
     public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name) {
         return Optional.empty();
+    }
+
+    @Override
+    public @NotNull FileOperationEnum getCurrentOperation() {
+        throw new UnsupportedOperationException("This operation is not supported.");
+    }
+
+    @Override
+    public void setCurrentOperation(@NotNull FileOperationEnum newOperation) {
+        throw new UnsupportedOperationException("This operation is not supported.");
     }
 }

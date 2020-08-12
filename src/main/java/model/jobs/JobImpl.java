@@ -1,10 +1,11 @@
 package model.jobs;
 
 import model.ISuffixesCollection;
+import model.ModelObservableEvents;
 import model.file_operations.FileOperationException;
 import model.file_operations.IFileOperation;
-import model.jobs.file_locators.FileLocatorImpl;
-import model.jobs.file_locators.IFileLocator;
+import utilities.file_locators.FileLocatorImpl;
+import utilities.file_locators.IFileLocator;
 import model.string_filters.operations.Operation;
 import model.string_filters.operations.filename.FileNameFilterOperation;
 import org.apache.commons.io.FilenameUtils;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * If suffixesCollection passed in constructor is null, the Operation is applied to all files...
  */
-public class JobImpl implements IJob {
+public class JobImpl extends Job {
 
     private static final Logger logger = LoggerFactory.getLogger(JobImpl.class);
 
@@ -46,7 +46,7 @@ public class JobImpl implements IJob {
 
     private final int jobId;
 
-    private final List<JobObserver> observers = new ArrayList<>();
+    private JobStatus jobStatus;
 
     public JobImpl(@NotNull Path inputFolder,
                    @NotNull Path outputFolder,
@@ -71,35 +71,34 @@ public class JobImpl implements IJob {
     }
 
     @Override
-    public boolean isStarted() {
-        return isStarted;
-    }
-
-    @Override
     public boolean isFinished() {
         return isFinished;
     }
 
     @Override
     public void start() {
-        isStarted = true;
-
-        if (!isRunning()) {
+        if (!isRunning() && !isFinished()) {
             isRunning = true;
             shouldStop = false;
 
             List<Path> foundFiles = fileLocator.findUsingSuffixesCollection(inputFolder, suffixesCollection);
+            jobStatus = new JobStatus(jobId, foundFiles.size());
+            firePropertyChange(ModelObservableEvents.JOB_RUNNING, jobId, jobStatus);
+
             for (Path file : foundFiles) {
                 if (shouldStop) {
+                    firePropertyChange(ModelObservableEvents.JOB_STOPPED, jobId, jobStatus);
                     break;
                 }
                 Path newFilteredPath = performFilterOperationOnFileName(file);
                 performOperation(file, newFilteredPath);
-                notifyObservers(file, newFilteredPath);
+
+                firePropertyChange(ModelObservableEvents.JOB_FILE_PROCESSED, jobId, jobStatus);
             }
 
             isRunning = false;
             isFinished = true;
+            firePropertyChange(ModelObservableEvents.JOB_FINISHED, jobId, jobStatus);
         }
     }
 
@@ -125,8 +124,10 @@ public class JobImpl implements IJob {
         try {
             //Thread.sleep(2000);
             fileOperation.performFileOperation(file, newFilteredPath);
+            jobStatus.fileProcessed(file, newFilteredPath);
         } catch (FileOperationException e) {
-            logger.error(e.getLocalizedMessage(), e);
+            jobStatus.fileProcessedWithError(file, newFilteredPath, e.getMessage());
+            logger.error(e.toString());
         }
     }
 
@@ -146,24 +147,5 @@ public class JobImpl implements IJob {
     @Override
     public int hashCode() {
         return Objects.hash(jobId);
-    }
-
-    @Override
-    public void addObserver(JobObserver observer) {
-        if (!observers.contains(observer)) {
-            observers.add(observer);
-        }
-    }
-
-    @Override
-    public void removeObserver(JobObserver observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers(Path oldFile, Path newFile) {
-        for (JobObserver observer : observers) {
-            observer.update(this, oldFile, newFile);
-        }
     }
 }

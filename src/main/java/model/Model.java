@@ -1,10 +1,11 @@
 package model;
 
-import model.jobs.IJob;
+import model.jobs.Job;
 import model.jobs.IJobManager;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import org.jetbrains.annotations.NotNull;
 
+import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -50,25 +51,25 @@ import java.util.Optional;
  *           ; // wait for it to finish
  *      }
  */
-public interface IModel {
-    void setInputFolder(@NotNull Path newInputFolder);
-    @NotNull Path getInputFolder();
+public abstract class Model extends AbstractObservableModel {
+    public abstract void setInputFolder(@NotNull Path newInputFolder);
+    public abstract @NotNull Path getInputFolder();
 
-    void setOutputFolder(@NotNull Path newOutputFolder);
-    @NotNull Path getOutputFolder();
+    public abstract void setOutputFolder(@NotNull Path newOutputFolder);
+    public abstract @NotNull Path getOutputFolder();
 
-    void setSuffixes(@NotNull ISuffixesCollection newSuffixes);
-    @NotNull ISuffixesCollection getSuffixes();
+    public abstract void setSuffixes(@NotNull ISuffixesCollection newSuffixes);
+    public abstract @NotNull ISuffixesCollection getSuffixes();
 
-    @NotNull List<String> getSupportedOperationNames();
-    void setOperation(@NotNull String operationName) throws IllegalArgumentException;
+    public abstract @NotNull List<String> getSupportedOperationNames();
+    public abstract void setOperation(@NotNull String operationName) throws IllegalArgumentException;
 
-    @NotNull IJobManager getJobManager();
+    public abstract @NotNull IJobManager getJobManager();
 
     /**
      * Creates a new IJob with parameters set previously by calling setInputFolder,setOutputFolder methods
      */
-    @NotNull IJob createJobSyncWithDefaultParameters();
+    public abstract @NotNull Job createJobSyncWithDefaultParameters();
 
     /**
      * Creates a new IJob with parameters set previously by calling setInputFolder,setOutputFolder methods
@@ -76,15 +77,26 @@ public interface IModel {
      * and scheduled to run as soon as asynchronous resources are available
      * (Eg from thread pool)
      */
-    @NotNull IJob createJobAsyncWithDefaultParameters();
+    public abstract @NotNull Job createJobAsyncWithDefaultParameters();
 
-    @NotNull CollectionOfSuffixesCollections getPredefinedFileSuffixesDb();
-    void addNewPredefinedFileSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection);
-    void removePredefinedFileSuffixesCollection(@NotNull String name);
-    Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(@NotNull String name);
+    /**
+     * Same as the parameterless method. Moreover allows to assign observer to the created job as soon as possible.
+     */
+    public abstract @NotNull Job createJobAsyncWithDefaultParameters(@NotNull PropertyChangeListener listener);
+
+    public abstract @NotNull CollectionOfSuffixesCollections getPredefinedFileSuffixesDb();
+    public abstract void addNewPredefinedFileSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection);
+    public abstract void removePredefinedFileSuffixesCollection(@NotNull String name);
+    public abstract @NotNull Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(@NotNull String name);
 
     /**
      * Use persistent storage.
      */
-    void storeAll();
+    public abstract void storeAll();
+
+    /**
+     * This method executes in its own thread and should report using fire-observable methods.
+     */
+    public abstract void countRelevantFilesInInputFolder();
+
 }

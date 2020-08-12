@@ -1,4 +1,4 @@
-package model.jobs.file_locators;
+package utilities.file_locators;
 
 import model.ISuffixesCollection;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +23,7 @@ public class FileLocatorImpl implements IFileLocator {
     private static final int MAX_RECURSIVE_DEPTH = 32;
 
     private Path rootFolder;
+    private ISuffixesCollection suffixesCollection;
 
     private List<Path> findFilesByRegex(@NotNull String syntaxAndPattern) throws FileLocatorException {
         PathMatcher pathMatcher = compileRegex(syntaxAndPattern);
@@ -69,7 +70,7 @@ public class FileLocatorImpl implements IFileLocator {
     }
 
     @Override
-    public List<Path> findUsingRegex(@NotNull Path rootFolder, @NotNull String fileRegex) throws FileLocatorException {
+    public @NotNull List<Path> findUsingRegex(@NotNull Path rootFolder, @NotNull String fileRegex) throws FileLocatorException {
         this.rootFolder = rootFolder;
 
         if (doRootFolderExists()) {
@@ -82,7 +83,7 @@ public class FileLocatorImpl implements IFileLocator {
     }
 
     @Override
-    public List<Path> findUsingSuffixesCollection(@NotNull Path rootFolder, @Nullable ISuffixesCollection suffixesCollection) throws FileLocatorException {
+    public @NotNull List<Path> findUsingSuffixesCollection(@NotNull Path rootFolder, @Nullable ISuffixesCollection suffixesCollection) throws FileLocatorException {
         if (suffixesCollection != null) {
             return findUsingRegex(
                     rootFolder,
@@ -116,5 +117,24 @@ public class FileLocatorImpl implements IFileLocator {
                 MAX_RECURSIVE_DEPTH,
                 (path, basicFileAttribute) -> basicFileAttribute.isRegularFile()
         );
+    }
+
+    @Override
+    public void setRootFolder(@NotNull Path rootFolder) {
+        this.rootFolder = rootFolder;
+    }
+
+    @Override
+    public void setSuffixesCollection(@NotNull ISuffixesCollection suffixesCollection) {
+        this.suffixesCollection = suffixesCollection;
+    }
+
+    @Override
+    public @NotNull List<Path> find() throws FileLocatorException {
+        if (rootFolder == null || suffixesCollection == null) {
+            throw new FileLocatorException("Attributes rootFolder and suffixesCollection must be nonNull...");
+        }
+
+        return findUsingSuffixesCollection(rootFolder, suffixesCollection);
     }
 }

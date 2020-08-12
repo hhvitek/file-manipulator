@@ -1,4 +1,4 @@
-package model.jobs.file_locators;
+package utilities.file_locators;
 
 import model.ISuffixesCollection;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ public interface IFileLocator {
      * @param fileRegex Regular expression defining file name format. The regex syntax is defined by implementation class
      * @return Found files as List of Paths.
      */
-    List<Path> findUsingRegex(@NotNull Path rootFolder, @NotNull String fileRegex) throws FileLocatorException;
+    @NotNull List<Path> findUsingRegex(@NotNull Path rootFolder, @NotNull String fileRegex) throws FileLocatorException;
 
     /**
      * Searches rootFolder recursively. Finds all Files with defined file suffixes (extensions).
@@ -24,6 +24,16 @@ public interface IFileLocator {
      *
      * If suffixesCollection parameter is null, all files in rootFolder are returned (recursively).
      */
-    List<Path> findUsingSuffixesCollection(@NotNull Path rootFolder, @Nullable ISuffixesCollection suffixesCollection) throws FileLocatorException;
-    List<Path> listAllFiles(@NotNull Path rootFolder) throws FileLocatorException;
+    @NotNull List<Path> findUsingSuffixesCollection(@NotNull Path rootFolder, @Nullable ISuffixesCollection suffixesCollection) throws FileLocatorException;
+    @NotNull List<Path> listAllFiles(@NotNull Path rootFolder) throws FileLocatorException;
+
+    void setRootFolder(@NotNull Path rootFolder);
+    void setSuffixesCollection(@NotNull ISuffixesCollection suffixesCollection);
+
+    /**
+     * Executes search using previously set attributes using setRootFolder() and setSuffixesCollection() methods.
+
+     * @throws FileLocatorException if attributes are not set properly OR on search error.
+     */
+    @NotNull List<Path> find() throws FileLocatorException;
 }

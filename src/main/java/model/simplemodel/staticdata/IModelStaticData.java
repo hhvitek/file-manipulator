@@ -1,6 +1,7 @@
 package model.simplemodel.staticdata;
 
 import model.ISuffixesCollection;
+import model.file_operations.FileOperationEnum;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,4 +22,7 @@ public interface IModelStaticData {
     void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection);
     void removePredefinedSuffixesCollection(@NotNull String name);
     Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name);
+
+    @NotNull FileOperationEnum getCurrentOperation();
+    void setCurrentOperation(@NotNull FileOperationEnum newOperation);
 }

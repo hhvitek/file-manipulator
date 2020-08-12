@@ -11,7 +11,13 @@ import java.util.List;
  */
 public class AllSuffixesCollection extends SuffixesCollectionImpl {
 
-    private static final String name = "ALL";
+    private static final String NAME = "ALL";
+
+    public AllSuffixesCollection() {
+        super(NAME);
+    }
+
+
 
     @Override
     public void addSuffix(String suffix) {
@@ -26,16 +32,6 @@ public class AllSuffixesCollection extends SuffixesCollectionImpl {
     @Override
     public void addSuffixes(String delimitedSuffixes, String delimiter) {
 
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean hasName(String anotherName) {
-        return anotherName != null && anotherName.equalsIgnoreCase(name);
     }
 
     @Override

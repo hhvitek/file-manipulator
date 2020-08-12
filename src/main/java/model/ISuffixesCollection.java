@@ -56,7 +56,7 @@ public interface ISuffixesCollection extends Iterable<String> {
     String[] getSuffixesAsStrArray();
 
     /**
-     * Returns String formatted such as the following example: "glob:**.{exe,bat,sh}"
+     * Returns String formatted such as the following example: "glob:*.{exe,bat,sh}"
      */
     String getFileGlobRegexFromSuffixes();
 

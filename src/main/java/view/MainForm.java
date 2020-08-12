@@ -1,8 +1,10 @@
 package view;
 
-import controller.IController;
-import model.IModel;
+import controller.ISupportedActionsForViewByController;
+import model.Model;
 import model.ISuffixesCollection;
+import model.ModelObservableEvents;
+import model.jobs.JobStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,11 +12,12 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MainForm {
+public class MainForm extends AbstractView {
     private JPanel panelMainForm;
     private JPanel panelStatusBar;
     private JPanel panelApp;
@@ -35,7 +38,7 @@ public class MainForm {
     private JButton buttonStore;
     private JPanel panelSuffixes;
     private JTextField textFieldFileSuffixes;
-    private JButton buttonLoad;
+    private JButton buttonCount;
     private JComboBox comboBoxChoosePredefinedFileSuffixes;
     private JPanel panelOperations;
     private JComboBox comboBoxFileOperations;
@@ -47,6 +50,7 @@ public class MainForm {
     private JLabel labelSuffixes;
     private JPanel panelInnerSuffixesControls;
     private JButton buttonDeleteAll;
+    private JScrollPane scrollPaneStatusBarMessageContainer;
 
 
     //################CUSTOM VARIABLES
@@ -62,14 +66,15 @@ public class MainForm {
     private final JFrame swingFrame;
 
     // IModel
-    private final IModel model;
-    private final IController controller;
+    private final Model model;
+    private final ISupportedActionsForViewByController controller;
 
     //################END CUSTOM VARIABLES
 
-    public MainForm(@NotNull IModel model, @NotNull IController controller) {
+    public MainForm(@NotNull Model model, @NotNull ISupportedActionsForViewByController controller) {
         this.model = model;
         this.controller = controller;
+        controller.setView(this);
 
         swingFrame = mainFormUtility.createMainForm(panelMainForm);
 
@@ -94,7 +99,6 @@ public class MainForm {
         buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                loadAllAndUpdateFromModel();
                 controller.createAndStartJob();
             }
         });
@@ -110,45 +114,40 @@ public class MainForm {
                 controller.exitApplication();
             }
         });
-        buttonLoad.addActionListener(new ActionListener() {
+        buttonCount.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                loadAllAndUpdateFromModel();
-                setStatusBarMessage("All files updated from model.");
+                controller.countRelevantFilesInInputFolder();
             }
         });
         buttonStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                storeAllToModel();
-                controller.storeAllToPersistentStorage();
-                setStatusBarMessage("Stored successfully");
+                //TODO controller.storeAllToPersistentStorage();
+                setInfoMessage("Not supported yet.");
             }
         });
+        /*
+            User used comboBox to select another suffixes...
+         */
         comboBoxChoosePredefinedFileSuffixes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Object selectedItem = comboBoxChoosePredefinedFileSuffixes.getSelectedItem();
                 if (Objects.nonNull(selectedItem)) {
-                    newPredefinedSuffixesChosenByUser(selectedItem.toString());
+                    controller.newPredefinedSuffixesChosenByUser(selectedItem.toString());
                 }
             }
         });
-        comboBoxFileOperations.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object selectedItem = comboBoxFileOperations.getSelectedItem();
-                if (Objects.nonNull(selectedItem)) {
-                    newFileOperationChosenByUser(selectedItem.toString());
-                }
-            }
-        });
+        /*
+            Follows controls for suffixes
+         */
         buttonAddSuffixesCategory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = textFieldName.getText();
                 String delimitedString = textFieldFileSuffixes.getText();
-                addNewSuffixesCategory(name, delimitedString);
+                controller.newSuffixesModifiedByUser(name, delimitedString, SUFFIXES_DELIMITER);
             }
         });
         buttonDeleteAll.addActionListener(new ActionListener() {
@@ -158,7 +157,6 @@ public class MainForm {
                 controller.removeSuffixesCollection(suffixesCollectionName);
             }
         });
-
         buttonDeleteSuffixesCategory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,28 +164,70 @@ public class MainForm {
                 controller.removeSuffixesCollection(suffixesCollectionName);
             }
         });
+        /*
+            User used comboBox to select another file operation...
+         */
+        comboBoxFileOperations.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object selectedItem = comboBoxFileOperations.getSelectedItem();
+                if (Objects.nonNull(selectedItem)) {
+                    controller.newFileOperationChosenByUser(selectedItem.toString());
+                }
+            }
+        });
+
+        Runnable inputFolderOnChange = () -> {
+            String inputFolder = textFieldInputFolder.getText();
+            controller.newInputFolderChosenByUser(inputFolder);
+        };
+        SwingViewUtils.addChangeListenerToJTextComponentOnChange(textFieldInputFolder, inputFolderOnChange);
+
+        Runnable outputFolderOnChange = () -> {
+            String outputFolder = textFieldOutputFolder.getText();
+            controller.newOutputFolderChosenByUser(outputFolder);
+        };
+        SwingViewUtils.addChangeListenerToJTextComponentOnChange(textFieldOutputFolder, outputFolderOnChange);
+
     }
 
     /**
      * Starts UI of the application
      */
-    public void startSwingApplication() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                loadAllAndUpdateFromModel();
-                fillPredefinedSuffixes();
-                fillSupportedFileOperations();
+    @Override
+    public void startView() {
+        fillPredefinedSuffixesFromModel();
+        fillSupportedFileOperationsFromModel();
+        fillInputAndOutputFoldersFromModel();
 
-                mainFormUtility.packAndShow();
-            }
-        });
+        SwingViewUtils.runAndShowWindow(swingFrame);
+
+    }
+
+    private void fillPredefinedSuffixesFromModel() {
+        for(ISuffixesCollection predefinedCategory: model.getPredefinedFileSuffixesDb()) {
+            comboBoxChoosePredefinedFileSuffixes.addItem(
+                    predefinedCategory.getName()
+            );
+        }
+    }
+
+    private void fillSupportedFileOperationsFromModel() {
+        for(String operationName: model.getSupportedOperationNames()) {
+            comboBoxFileOperations.addItem(operationName);
+        }
+    }
+
+    private void fillInputAndOutputFoldersFromModel() {
+        setInputFolder(model.getInputFolder());
+        setOutputFolder(model.getOutputFolder());
     }
 
     /**
      * Stops UI of the application
      */
-    public void stopSwingApplication() {
+    @Override
+    public void destroyView() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -196,27 +236,20 @@ public class MainForm {
         });
     }
 
-    public void setStatusBarMessage(String message) {
+    @Override
+    public void setInfoMessage(@NotNull String message) {
         labelStatusBarStatusText.setText(message);
+        labelStatusBarStatusText.setToolTipText(message);
     }
 
-    private void newPredefinedSuffixesChosenByUser(String newSuffixesCategoryName) {
-        controller.newPredefinedSuffixesChosenByUser(newSuffixesCategoryName);
+    @Override
+    public void setErrorMessage(@NotNull String errorMessage) {
+        setInfoMessage(errorMessage);
+        SwingViewUtils.showErrorMessageDialog(swingFrame, errorMessage);
     }
 
-    private void newFileOperationChosenByUser(String operationName) {
-        controller.newFileOperationChosenByUser(operationName);
-    }
-
-    private void setFolder(JTextField folderTextField, Path newFolder) {
-        folderTextField.setText(newFolder.toString());
-    }
-
-    private void addNewSuffixesCategory(String name, String delimitedString) {
-        controller.newSuffixesModifiedByUser(name, delimitedString, SUFFIXES_DELIMITER);
-    }
-
-    public void setSuffixes(ISuffixesCollection suffixes) {
+    @Override
+    public void setSuffixes(@NotNull ISuffixesCollection suffixes) {
         textFieldFileSuffixes.setText(
                 suffixes.getSuffixesAsDelimitedString(SUFFIXES_JOINER_STRING)
         );
@@ -225,18 +258,28 @@ public class MainForm {
         );
     }
 
-    public void setInputFolder(Path newInputFolder) {
+    @Override
+    public void setInputFolder(@NotNull Path newInputFolder) {
         setFolder(textFieldInputFolder, newInputFolder);
     }
 
-    public void setOutputFolder(Path newOutputFolder) {
+    private void setFolder(@NotNull JTextField folderTextField, @NotNull Path newFolder) {
+        folderTextField.setText(newFolder.toString());
+        folderTextField.setToolTipText(newFolder.toString());
+    }
+
+    @Override
+    public void setOutputFolder(@NotNull Path newOutputFolder) {
         setFolder(textFieldOutputFolder, newOutputFolder);
     }
 
-    public void refreshPredefinedSuffixesCollections() {
+    /**
+     * Call when underline model's suffixes changed.
+     */
+    private void refillPredefinedSuffixesFromModelPreservingSelection() {
         String selectedItem = textFieldName.getText();
         comboBoxChoosePredefinedFileSuffixes.removeAllItems();
-        fillPredefinedSuffixes();
+        fillPredefinedSuffixesFromModel();
         selectPredefinedSuffix(selectedItem);
     }
 
@@ -247,19 +290,7 @@ public class MainForm {
     }
 
 
-    private void fillPredefinedSuffixes() {
-        for(ISuffixesCollection predefinedCategory: model.getPredefinedFileSuffixesDb()) {
-            comboBoxChoosePredefinedFileSuffixes.addItem(
-                    predefinedCategory.getName()
-            );
-        }
-    }
-
-    private void fillSupportedFileOperations() {
-        for(String operationName: model.getSupportedOperationNames()) {
-            comboBoxFileOperations.addItem(operationName);
-        }
-    }
+    /*
 
     private void loadAllAndUpdateFromModel() {
         setInputFolder(model.getInputFolder());
@@ -278,6 +309,56 @@ public class MainForm {
 
         newPredefinedSuffixesChosenByUser(textFieldFileSuffixes.getText());
     }
+    */
 
+    @Override
+    public void modelPropertyChange(PropertyChangeEvent evt) {
+        logger.debug("Event received: {}", evt.getPropertyName());
 
+        String eventName = evt.getPropertyName();
+        ModelObservableEvents modelEvent = ModelObservableEvents.valueOf(eventName);
+
+        switch (modelEvent) {
+            case NEW_SUFFIXES_COLLECTION_ADDED: {
+                refillPredefinedSuffixesFromModelPreservingSelection();
+                break;
+            }
+            case COUNTING_RELEVANT_FILES_FINISHED: {
+                int countedRelevantFiles = (int) evt.getOldValue();
+                setInfoMessage("Counted <" + countedRelevantFiles + "> relevant files.");
+                break;
+            }
+            case JOB_RUNNING: {
+                JobStatus jobStatus = (JobStatus) evt.getNewValue();
+                int totalFilesCount = jobStatus.getTotalFilesCount();
+                progressBar.setMaximum(totalFilesCount);
+                progressBar.setIndeterminate(true);
+                break;
+            }
+            case JOB_FILE_PROCESSED: {
+                JobStatus jobStatus = (JobStatus) evt.getNewValue();
+                int currentValue = jobStatus.getTotalFilesCount() - jobStatus.getRemainingFileCount();
+                progressBar.setValue(currentValue);
+                break;
+            }
+            case JOB_FINISHED: {
+                JobStatus jobStatus = (JobStatus) evt.getNewValue();
+                progressBar.setIndeterminate(false);
+                String message = "Job: " + jobStatus.getJobId() + " finished.";
+                if (jobStatus.encounteredError()) {
+                    message += " Some errors encountered.";
+                }
+                progressBar.setString(message);
+                setInfoMessage(message);
+                break;
+            }
+        }
+    }
+
+    private void createUIComponents() {
+        scrollPaneStatusBarMessageContainer = new JScrollPane();
+        scrollPaneStatusBarMessageContainer.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneStatusBarMessageContainer.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        scrollPaneStatusBarMessageContainer.setBorder(BorderFactory.createEmptyBorder());
+    }
 }
