@@ -60,7 +60,7 @@ public abstract class IModelTest {
 
     @Test
     void defaultPredefinedSuffixes_EqualsFirstPredefinedSuffixesTest() {
-        ISuffixesCollection expectedSuffixes = PredefinedSuffixesEnum.AUDIO.getSuffixes();
+        ISuffixesCollection expectedSuffixes = PredefinedSuffixesEnum.ALL.getSuffixes();
         Assertions.assertEquals(expectedSuffixes, model.getSuffixes());
     }
 

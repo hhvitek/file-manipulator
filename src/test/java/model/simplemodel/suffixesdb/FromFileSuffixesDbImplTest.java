@@ -3,10 +3,7 @@ package model.simplemodel.suffixesdb;
 import model.ISuffixesCollection;
 import model.simplemodel.CollectionOfSuffixesCollections;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+@Disabled
 class FromFileSuffixesDbImplTest {
 
     ISuffixesDb db;
