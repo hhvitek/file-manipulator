@@ -258,8 +258,7 @@ public class MainForm extends AbstractView {
         );
     }
 
-    @Override
-    public void setInputFolder(@NotNull Path newInputFolder) {
+    private void setInputFolder(@NotNull Path newInputFolder) {
         setFolder(textFieldInputFolder, newInputFolder);
     }
 
@@ -268,8 +267,7 @@ public class MainForm extends AbstractView {
         folderTextField.setToolTipText(newFolder.toString());
     }
 
-    @Override
-    public void setOutputFolder(@NotNull Path newOutputFolder) {
+    private void setOutputFolder(@NotNull Path newOutputFolder) {
         setFolder(textFieldOutputFolder, newOutputFolder);
     }
 
@@ -319,6 +317,18 @@ public class MainForm extends AbstractView {
         ModelObservableEvents modelEvent = ModelObservableEvents.valueOf(eventName);
 
         switch (modelEvent) {
+            case INPUT_FOLDER_CHANGED: {
+                Path newInputPath = (Path) evt.getNewValue();
+                setInputFolder(newInputPath);
+
+                controller.newOutputFolderChosenByUser(newInputPath.resolve("OUTPUT").toString());
+                break;
+            }
+            case OUTPUT_FOLDER_CHANGED: {
+                Path newOutputPath = (Path) evt.getNewValue();
+                setOutputFolder(newOutputPath);
+                break;
+            }
             case NEW_SUFFIXES_COLLECTION_ADDED: {
                 refillPredefinedSuffixesFromModelPreservingSelection();
                 break;
