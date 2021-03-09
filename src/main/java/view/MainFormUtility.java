@@ -3,7 +3,6 @@ package view;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -13,7 +12,7 @@ public class MainFormUtility {
     private JFrame mainForm;
 
     public JFrame createMainForm(@NotNull JPanel contentPanel) {
-        mainForm = new JFrame("Main Frame");
+        mainForm = new JFrame("FileManipulator");
         mainForm.setContentPane(contentPanel);
         mainForm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         return mainForm;
