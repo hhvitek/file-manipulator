@@ -1,9 +1,9 @@
 package controller;
 
-import model.jobs.Job;
-import model.jobs.IJobManager;
-import model.Model;
 import model.ISuffixesCollection;
+import model.Model;
+import model.jobs.IJobManager;
+import model.jobs.Job;
 import model.simplemodel.SuffixesCollectionImpl;
 import org.jetbrains.annotations.NotNull;
 import view.AbstractView;
@@ -11,7 +11,6 @@ import view.AbstractView;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Optional;
 
 public class SimpleController extends AbstractController implements ISupportedActionsForViewByController {
@@ -35,7 +34,8 @@ public class SimpleController extends AbstractController implements ISupportedAc
 
     @Override
     public void exitApplication() {
-
+        stopAll();
+        System.exit(0);
     }
 
     @Override
