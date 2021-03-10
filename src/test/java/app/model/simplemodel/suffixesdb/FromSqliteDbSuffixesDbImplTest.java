@@ -2,9 +2,7 @@ package app.model.simplemodel.suffixesdb;
 
 import app.model.ISuffixesCollection;
 import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
-import app.model.simplemodel.suffixesdb.FromPredefinedSuffixesEnumISuffixesDbImpl;
-import app.model.simplemodel.suffixesdb.FromSqliteDbISuffixesDbImpl;
-import app.model.simplemodel.suffixesdb.ISuffixesDb;
+import app.model.simplemodel.staticdata.jdbcdqlite.FromSqliteDbISuffixesDbImpl;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
