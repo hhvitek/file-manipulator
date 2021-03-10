@@ -1,6 +1,5 @@
 package app.model.simplemodel.staticdata.jdbcdqlite;
 
-import app.model.simplemodel.staticdata.jpa.dboperations.DbConnectionErrorException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

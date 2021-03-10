@@ -3,7 +3,6 @@ package app.model.simplemodel.staticdata.jdbcdqlite;
 import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
 import app.model.simplemodel.SuffixesCollectionImpl;
 import app.model.simplemodel.staticdata.IModelStaticData;
-import app.model.simplemodel.staticdata.jpa.dboperations.DbConnectionErrorException;
 import app.model.ISuffixesCollection;
 import app.model.file_operations.FileOperationEnum;
 
