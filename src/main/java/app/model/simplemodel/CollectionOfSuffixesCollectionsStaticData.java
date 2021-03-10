@@ -1,6 +1,6 @@
-package model.simplemodel;
+package app.model.simplemodel;
 
-import model.ISuffixesCollection;
+import app.model.ISuffixesCollection;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +19,19 @@ import java.util.*;
  *          -> ccc, ddd
  *  }
  */
-public class CollectionOfSuffixesCollections implements Iterable<ISuffixesCollection> {
+public class CollectionOfSuffixesCollectionsStaticData implements Iterable<ISuffixesCollection> {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionOfSuffixesCollections.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollectionOfSuffixesCollectionsStaticData.class);
 
     private String name = "";
 
     private final Map<String,ISuffixesCollection> suffixesCollections;
 
-    public CollectionOfSuffixesCollections() {
+    public CollectionOfSuffixesCollectionsStaticData() {
         suffixesCollections = new HashMap<>();
     }
 
-    public CollectionOfSuffixesCollections(@NotNull String name) {
+    public CollectionOfSuffixesCollectionsStaticData(@NotNull String name) {
         this();
         this.name = name;
     }
