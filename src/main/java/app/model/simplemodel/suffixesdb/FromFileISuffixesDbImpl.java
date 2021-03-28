@@ -1,11 +1,11 @@
 package app.model.simplemodel.suffixesdb;
 
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.SuffixesDbException;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
-import app.model.simplemodel.SuffixesCollectionImpl;
-import app.model.simplemodel.suffixesdb.InvalidSuffixesFileFormatException;
+import app.model.simplemodel.AllSuffixes;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
+import app.model.simplemodel.SuffixesImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -28,7 +28,7 @@ public class FromFileISuffixesDbImpl implements ISuffixesDb {
     private static final Pattern COLUMN_SEPARATOR_PATTERN = Pattern.compile("\\|\\|");
 
     private Path suffixesDbFilePath;
-    private CollectionOfSuffixesCollectionsStaticData suffixesDb;
+    private CollectionOfSuffixesStaticData suffixesDb;
 
     public FromFileISuffixesDbImpl(Path suffixesDbFilePath) {
         this.suffixesDbFilePath = suffixesDbFilePath;
@@ -40,15 +40,15 @@ public class FromFileISuffixesDbImpl implements ISuffixesDb {
     }
 
     @Override
-    public CollectionOfSuffixesCollectionsStaticData load() throws SuffixesDbException {
-        this.suffixesDb = new CollectionOfSuffixesCollectionsStaticData();
+    public CollectionOfSuffixesStaticData load() throws SuffixesDbException {
+        this.suffixesDb = new CollectionOfSuffixesStaticData();
 
         try (BufferedReader reader =
                 new BufferedReader(
                         new FileReader(suffixesDbFilePath.toFile())
                 )
         ) {
-            CollectionOfSuffixesCollectionsStaticData collection = processFileLineByLine(reader);
+            CollectionOfSuffixesStaticData collection = processFileLineByLine(reader);
             return collection;
         } catch (FileNotFoundException ex) {
             throw new SuffixesDbException("The storage file not found: " + suffixesDbFilePath, ex);
@@ -57,11 +57,11 @@ public class FromFileISuffixesDbImpl implements ISuffixesDb {
         }
     }
 
-    private CollectionOfSuffixesCollectionsStaticData processFileLineByLine(@NotNull BufferedReader reader) throws InvalidSuffixesFileFormatException, IOException {
+    private CollectionOfSuffixesStaticData processFileLineByLine(@NotNull BufferedReader reader) throws InvalidSuffixesFileFormatException, IOException {
         String line;
         while ((line = reader.readLine()) != null) {
             if (!shouldIgnoreLine(line)) {
-                processSuffixesCollectionLine(line);
+                processSuffixesLine(line);
             }
         }
         return suffixesDb;
@@ -71,10 +71,17 @@ public class FromFileISuffixesDbImpl implements ISuffixesDb {
         return line.isBlank() || isComment(line);
     }
 
-    private void processSuffixesCollectionLine(@NotNull String suffixesLine) throws InvalidSuffixesFileFormatException {
+    private void processSuffixesLine(@NotNull String suffixesLine) throws InvalidSuffixesFileFormatException {
         String[] splitLine = COLUMN_SEPARATOR_PATTERN.split(suffixesLine);
 
-        if (splitLine.length != COLUMN_LENGTH) {
+        if (splitLine.length == 1 && splitLine[0].equalsIgnoreCase("ALL")) {
+            String name = splitLine[0];
+            ISuffixes suffixes = createSuffixes(name, "");
+            suffixesDb.addNewSuffixesIfAbsent(suffixes);
+            return;
+        }
+
+        if (splitLine.length != COLUMN_LENGTH && splitLine.length != 1) {
             throw new InvalidSuffixesFileFormatException(
                     String.format("Line must contain <%d> items separated by <%s>. Found <%d> items. <%s>",
                             COLUMN_LENGTH,
@@ -85,16 +92,20 @@ public class FromFileISuffixesDbImpl implements ISuffixesDb {
             );
         } else {
             String name = splitLine[0];
-            String suffixes = splitLine[1];
-            ISuffixesCollection suffixesCollection = createSuffixesCollection(name, suffixes);
-            suffixesDb.addNewSuffixesCollectionIfAbsent(suffixesCollection);
+            String suffixesString = splitLine[1];
+            ISuffixes suffixes = createSuffixes(name, suffixesString);
+            suffixesDb.addNewSuffixesIfAbsent(suffixes);
         }
     }
 
-    private ISuffixesCollection createSuffixesCollection(@NotNull String name, @NotNull String suffixes) {
-        ISuffixesCollection suffixesCollection = new SuffixesCollectionImpl(name);
-        suffixesCollection.addSuffixes(suffixes, SUFFIXES_SEPARATOR);
-        return suffixesCollection;
+    private ISuffixes createSuffixes(@NotNull String name, @NotNull String suffixesString) {
+        if (name.equalsIgnoreCase("ALL") && suffixesString.isEmpty()) {
+            return new AllSuffixes();
+        }
+
+        ISuffixes suffixes = new SuffixesImpl(name);
+        suffixes.addSuffixes(suffixesString, SUFFIXES_SEPARATOR);
+        return suffixes;
     }
 
     private boolean isComment(String line) {
@@ -102,10 +113,10 @@ public class FromFileISuffixesDbImpl implements ISuffixesDb {
     }
 
     @Override
-    public void store(@NotNull CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData) throws SuffixesDbException {
+    public void store(@NotNull CollectionOfSuffixesStaticData collectionOfSuffixesStaticData) throws SuffixesDbException {
         String textToStore = String.format("%s%n%s",
                 getFileHeaderComment(),
-                createFileSuffixesLines(collectionOfSuffixesCollectionsStaticData)
+                createFileSuffixesLines(collectionOfSuffixesStaticData)
         );
 
         try {
@@ -123,20 +134,20 @@ public class FromFileISuffixesDbImpl implements ISuffixesDb {
         );
     }
 
-    private String createFileSuffixesLines(@NotNull CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData) {
+    private String createFileSuffixesLines(@NotNull CollectionOfSuffixesStaticData collectionOfSuffixesStaticData) {
         StringBuilder stringBuilder = new StringBuilder();
-        for(ISuffixesCollection suffixesCollection: collectionOfSuffixesCollectionsStaticData) {
-            String suffixLine = createSuffixesLine(suffixesCollection);
+        for(ISuffixes suffixes: collectionOfSuffixesStaticData) {
+            String suffixLine = createSuffixesLine(suffixes);
             stringBuilder.append(suffixLine);
             stringBuilder.append(System.lineSeparator());
         }
         return stringBuilder.toString();
     }
 
-    private String createSuffixesLine(@NotNull ISuffixesCollection suffixesCollection) {
-        String name = suffixesCollection.getName();
-        String suffixes = suffixesCollection.getSuffixesAsDelimitedString(SUFFIXES_SEPARATOR);
+    private String createSuffixesLine(@NotNull ISuffixes suffixes) {
+        String name = suffixes.getName();
+        String suffixesString = suffixes.getSuffixesAsDelimitedString(SUFFIXES_SEPARATOR);
 
-        return name + COLUMN_SEPARATOR + suffixes;
+        return name + COLUMN_SEPARATOR + suffixesString;
     }
 }
