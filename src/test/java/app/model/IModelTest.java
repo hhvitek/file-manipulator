@@ -1,11 +1,8 @@
 package app.model;
 
 import app.model.jobs.Job;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.simplemodel.SuffixesImpl;
 import app.model.simplemodel.suffixesdb.FromPredefinedSuffixesEnum;
-import app.model.jobs.Job;
-import app.model.simplemodel.suffixesdb.FromPredefinedSuffixesEnum;
-import app.model.simplemodel.SuffixesCollectionImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,7 +60,7 @@ public abstract class IModelTest {
 
     @Test
     void defaultPredefinedSuffixes_EqualsFirstPredefinedSuffixesTest() {
-        ISuffixesCollection expectedSuffixes = FromPredefinedSuffixesEnum.ALL.getSuffixes();
+        ISuffixes expectedSuffixes = FromPredefinedSuffixesEnum.ALL.getSuffixes();
         Assertions.assertEquals(expectedSuffixes, model.getSuffixes());
     }
 
@@ -74,7 +71,7 @@ public abstract class IModelTest {
         model.setInputFolder(INPUT_FOLDER);
         model.setOutputFolder(OUTPUT_FOLDER);
 
-        ISuffixesCollection suffixes = new SuffixesCollectionImpl();
+        ISuffixes suffixes = new SuffixesImpl();
         suffixes.addSuffixes("mp3, ogg", ",");
         model.setSuffixes(suffixes);
 

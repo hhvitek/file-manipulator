@@ -1,7 +1,6 @@
 package app.model;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.simplemodel.SuffixesImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +8,7 @@ class SuffixesCollectionImplTest {
 
     @Test
     void createEmptySuffixesCollection_theNameIsGeneratedAtRandomTest() {
-        ISuffixesCollection actualCollection = new SuffixesCollectionImpl();
+        ISuffixes actualCollection = new SuffixesImpl();
         String actualName = actualCollection.getName();
 
         Assertions.assertNotNull(actualName);
@@ -18,12 +17,12 @@ class SuffixesCollectionImplTest {
 
     @Test
     void variousAddMethodsUsedWithSameParameters_ResultingInTheSameObject_AND_TrimmingOfSuffixesTest() {
-        ISuffixesCollection firstCollection = new SuffixesCollectionImpl("the first collection");
+        ISuffixes firstCollection = new SuffixesImpl("the first collection");
         firstCollection.addSuffix("   mp3   ");
         firstCollection.addSuffix("   mp4");
         firstCollection.addSuffix("mpa    ");
 
-        ISuffixesCollection secondCollection = new SuffixesCollectionImpl("the first collection");
+        ISuffixes secondCollection = new SuffixesImpl("the first collection");
         secondCollection.addSuffixes("mp3,      mp4  ,    mpa", ",");
 
         Assertions.assertEquals(firstCollection, secondCollection);
@@ -31,12 +30,12 @@ class SuffixesCollectionImplTest {
 
     @Test
     void addTwoSuffixesCollections_withSameNameDifferentSuffixesTest() {
-        ISuffixesCollection firstCollection = new SuffixesCollectionImpl("the first collection");
+        ISuffixes firstCollection = new SuffixesImpl("the first collection");
         firstCollection.addSuffix("   mp3   ");
         firstCollection.addSuffix("   mp4");
         firstCollection.addSuffix("mpa    ");
 
-        ISuffixesCollection secondCollection = new SuffixesCollectionImpl("the first collection");
+        ISuffixes secondCollection = new SuffixesImpl("the first collection");
         secondCollection.addSuffixes("aaa,      bbb  ,    ccc", ",");
 
         Assertions.assertNotEquals(firstCollection, secondCollection);
@@ -44,12 +43,12 @@ class SuffixesCollectionImplTest {
 
     @Test
     void addTwoSuffixesCollections_withDifferentNameSameSuffixesTest() {
-        ISuffixesCollection firstCollection = new SuffixesCollectionImpl("the first collection");
+        ISuffixes firstCollection = new SuffixesImpl("the first collection");
         firstCollection.addSuffix("   mp3   ");
         firstCollection.addSuffix("   mp4");
         firstCollection.addSuffix("mpa    ");
 
-        ISuffixesCollection secondCollection = new SuffixesCollectionImpl("the second collection");
+        ISuffixes secondCollection = new SuffixesImpl("the second collection");
         secondCollection.addSuffixes("mp3,      mp4  ,    mpa", ",");
 
         Assertions.assertNotEquals(firstCollection, secondCollection);
@@ -59,7 +58,7 @@ class SuffixesCollectionImplTest {
     void emptySuffixesCollection_returnsCorrectGlobPatternTest() {
         String expectedGlobPattern = "glob:*.{}";
 
-        ISuffixesCollection emptyCollection = new SuffixesCollectionImpl("an empty collection");
+        ISuffixes emptyCollection = new SuffixesImpl("an empty collection");
         String actualGlobPattern = emptyCollection.getFileGlobRegexFromSuffixes();
 
         Assertions.assertEquals(expectedGlobPattern, actualGlobPattern);

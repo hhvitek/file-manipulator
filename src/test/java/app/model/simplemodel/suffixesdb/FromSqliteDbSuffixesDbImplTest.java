@@ -1,7 +1,7 @@
 package app.model.simplemodel.suffixesdb;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
+import app.model.ISuffixes;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
 import app.model.simplemodel.staticdata.jdbcdqlite.FromSqliteDbISuffixesDbImpl;
 import org.junit.jupiter.api.*;
 
@@ -58,12 +58,12 @@ class FromSqliteDbSuffixesDbImplTest {
         db = new FromSqliteDbISuffixesDbImpl(sqlUrl + ".out.sqlite3");
 
         ISuffixesDb enumDb = new FromPredefinedSuffixesEnumISuffixesDbImpl();
-        CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData = enumDb.load();
+        CollectionOfSuffixesStaticData collectionOfSuffixesStaticData = enumDb.load();
 
-        db.store(collectionOfSuffixesCollectionsStaticData);
+        db.store(collectionOfSuffixesStaticData);
 
-        CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData1 = db.load();
-        Assertions.assertTrue(collectionOfSuffixesCollectionsStaticData1.size() == 4);
+        CollectionOfSuffixesStaticData collectionOfSuffixesStaticData1 = db.load();
+        Assertions.assertTrue(collectionOfSuffixesStaticData1.size() == 4);
 
         Files.deleteIfExists(inputSuffixesDb.resolveSibling("suffixesdb_load.sqlite3.out.sqlite3"));
     }
@@ -72,11 +72,11 @@ class FromSqliteDbSuffixesDbImplTest {
     void sqliteLoadTest() {
         db = new FromSqliteDbISuffixesDbImpl(sqlUrl);
 
-        CollectionOfSuffixesCollectionsStaticData suffixesCollections = db.load();
+        CollectionOfSuffixesStaticData suffixesCollections = db.load();
 
         Assertions.assertTrue(suffixesCollections.size() == 3);
 
-        Optional<ISuffixesCollection> audios = suffixesCollections.getSuffixesCollectionByName("AUDIO");
+        Optional<ISuffixes> audios = suffixesCollections.getSuffixesByName("AUDIO");
         Assertions.assertTrue(audios.isPresent());
 
         if (audios.isPresent()) {

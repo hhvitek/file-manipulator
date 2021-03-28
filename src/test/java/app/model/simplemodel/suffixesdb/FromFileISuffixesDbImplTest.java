@@ -1,9 +1,7 @@
 package app.model.simplemodel.suffixesdb;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
-import app.model.simplemodel.suffixesdb.FromFileISuffixesDbImpl;
-import app.model.simplemodel.suffixesdb.ISuffixesDb;
+import app.model.ISuffixes;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 
@@ -66,11 +64,11 @@ class FromFileISuffixesDbImplTest {
     void standardFile_LoadTest() {
         db = new FromFileISuffixesDbImpl(inputSuffixesDb);
 
-        CollectionOfSuffixesCollectionsStaticData suffixesCollections = db.load();
+        CollectionOfSuffixesStaticData suffixesCollections = db.load();
 
         Assertions.assertTrue(suffixesCollections.size() == 3);
 
-        Optional<ISuffixesCollection> audios = suffixesCollections.getSuffixesCollectionByName("AUDIO");
+        Optional<ISuffixes> audios = suffixesCollections.getSuffixesByName("AUDIO");
         Assertions.assertTrue(audios.isPresent());
 
         if (audios.isPresent()) {
@@ -85,7 +83,7 @@ class FromFileISuffixesDbImplTest {
     @Test
     void standardFile_StoreTest() throws IOException {
         db = new FromFileISuffixesDbImpl(inputSuffixesDb);
-        CollectionOfSuffixesCollectionsStaticData suffixesCollections = db.load();
+        CollectionOfSuffixesStaticData suffixesCollections = db.load();
 
         Path outputFilePath = rootFolder.resolve("suffixesdb_store.txt");
 

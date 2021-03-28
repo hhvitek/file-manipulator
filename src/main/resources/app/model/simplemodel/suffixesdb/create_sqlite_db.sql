@@ -1,20 +1,20 @@
-CREATE TABLE IF NOT EXISTS suffixes_collection
+CREATE TABLE IF NOT EXISTS suffixes
 (
     name     TEXT PRIMARY KEY,
     suffixes TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS collection_of_suffixes_collections
+CREATE TABLE IF NOT EXISTS collection_of_suffixes
 (
     id   INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT
 );
 
-CREATE TABLE IF NOT EXISTS collections_to_suffixes_collections_mapping
+CREATE TABLE IF NOT EXISTS collections_to_suffixes_mapping
 (
-    suffixes_id   TEXT REFERENCES suffixes_collection (name) ON DELETE CASCADE
+    suffixes_id   TEXT REFERENCES suffixes (name) ON DELETE CASCADE
         ON UPDATE CASCADE,
-    collection_id INTEGER REFERENCES collection_of_suffixes_collections (id) ON DELETE CASCADE
+    collection_id INTEGER REFERENCES collection_of_suffixes (id) ON DELETE CASCADE
         ON UPDATE CASCADE,
     PRIMARY KEY (
                  suffixes_id,

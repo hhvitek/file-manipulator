@@ -1,8 +1,8 @@
 package app.utilities.file_locators;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.AllSuffixesCollection;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.ISuffixes;
+import app.model.simplemodel.AllSuffixes;
+import app.model.simplemodel.SuffixesImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,10 +34,10 @@ abstract class FileLocatorTest {
     void listFilesUsingSpecificSuffixes() {
         int expectedFoundFiles = 6;
 
-        ISuffixesCollection suffixesCollection = new SuffixesCollectionImpl();
+        ISuffixes suffixesCollection = new SuffixesImpl();
         suffixesCollection.addSuffixes("jpg,txt,avi", ",");
 
-        List<Path> foundFiles = locator.findUsingSuffixesCollection(rootFolder, suffixesCollection);
+        List<Path> foundFiles = locator.findUsingSuffixes(rootFolder, suffixesCollection);
         int actualFoundFiles = foundFiles.size();
 
         Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);
@@ -58,8 +58,8 @@ abstract class FileLocatorTest {
     void allSuffixesCollection_behavesLikeListAllFilesTest() {
         int expectedFoundFiles = 8;
 
-        ISuffixesCollection emptyCollection = new AllSuffixesCollection();
-        List<Path> foundFiles = locator.findUsingSuffixesCollection(rootFolder, emptyCollection);
+        ISuffixes emptyCollection = new AllSuffixes();
+        List<Path> foundFiles = locator.findUsingSuffixes(rootFolder, emptyCollection);
         int actualFoundFiles = foundFiles.size();
 
         Assertions.assertEquals(expectedFoundFiles, actualFoundFiles);
