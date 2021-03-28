@@ -1,6 +1,6 @@
 package app.utilities.file_locators;
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,16 +22,16 @@ public interface IFileLocator {
      * Searches rootFolder recursively. Finds all Files with defined file suffixes (extensions).
      * Suffixes are defined by ISuffixCollection
      *
-     * If suffixesCollection parameter is null, all files in rootFolder are returned (recursively).
+     * If suffixes parameter is null, all files in rootFolder are returned (recursively).
      */
-    @NotNull List<Path> findUsingSuffixesCollection(@NotNull Path rootFolder, @Nullable ISuffixesCollection suffixesCollection) throws FileLocatorException;
+    @NotNull List<Path> findUsingSuffixes(@NotNull Path rootFolder, @Nullable ISuffixes suffixes) throws FileLocatorException;
     @NotNull List<Path> listAllFiles(@NotNull Path rootFolder) throws FileLocatorException;
 
     void setRootFolder(@NotNull Path rootFolder);
-    void setSuffixesCollection(@NotNull ISuffixesCollection suffixesCollection);
+    void setSuffixes(@NotNull ISuffixes suffixes);
 
     /**
-     * Executes search using previously set attributes using setRootFolder() and setSuffixesCollection() methods.
+     * Executes search using previously set attributes using setRootFolder() and setSuffixes() methods.
 
      * @throws FileLocatorException if attributes are not set properly OR on search error.
      */

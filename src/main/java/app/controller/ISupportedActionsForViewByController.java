@@ -13,7 +13,7 @@ public interface ISupportedActionsForViewByController {
     void newSuffixesModifiedByUser(String name, String delimitedString, String delimiter);
     void newPredefinedSuffixesChosenByUser(String categoryName);
     void newFileOperationChosenByUser(String operationName);
-    void removeSuffixesCollection(@NotNull String name);
+    void removeSuffixes(@NotNull String name);
 
     void createAndStartJob();
     void stopAll();

@@ -1,6 +1,6 @@
 package app.model.jobs;
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.file_operations.IFileOperation;
 
 import java.nio.file.Path;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * Every job should run concurrently of its caller.
  */
 public interface IJobManager {
-    int createJob(Path inputFolder, Path outputFolder, ISuffixesCollection suffixes, IFileOperation fileOperation);
+    int createJob(Path inputFolder, Path outputFolder, ISuffixes suffixes, IFileOperation fileOperation);
     void appendJob(Job newJob);
     void stopJobIfExists(int jobId);
 

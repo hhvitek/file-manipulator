@@ -1,11 +1,11 @@
 package app.controller;
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.Model;
 import app.model.jobs.IJobManager;
 import app.model.jobs.Job;
-import app.model.simplemodel.AllSuffixesCollection;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.simplemodel.AllSuffixes;
+import app.model.simplemodel.SuffixesImpl;
 import org.jetbrains.annotations.NotNull;
 import app.view.AbstractView;
 
@@ -65,38 +65,38 @@ public class SimpleController extends AbstractController implements ISupportedAc
         }
     }
 
-    private ISuffixesCollection createSuffixesCollectionFromNameAndDelimitedString(String name, String delimitedString, String delimiter) {
-        ISuffixesCollection suffixesCollection;
+    private ISuffixes createSuffixesFromNameAndDelimitedString(String name, String delimitedString, String delimiter) {
+        ISuffixes suffixes;
         if (name == null) {
-            suffixesCollection = new SuffixesCollectionImpl();
+            suffixes = new SuffixesImpl();
         } else {
-            suffixesCollection = new SuffixesCollectionImpl(name);
+            suffixes = new SuffixesImpl(name);
         }
 
         if (delimitedString != null && !delimitedString.isEmpty()) {
-            suffixesCollection.addSuffixes(delimitedString, delimiter);
+            suffixes.addSuffixes(delimitedString, delimiter);
         } else {
-            suffixesCollection = new AllSuffixesCollection();
+            suffixes = new AllSuffixes();
         }
-        return suffixesCollection;
+        return suffixes;
     }
 
     @Override
     public void newSuffixesModifiedByUser(String name, String delimitedString, String delimiter) {
-        ISuffixesCollection suffixesCollection = createSuffixesCollectionFromNameAndDelimitedString(name, delimitedString, delimiter);
+        ISuffixes suffixes = createSuffixesFromNameAndDelimitedString(name, delimitedString, delimiter);
 
-        model.addNewPredefinedFileSuffixesCollection(suffixesCollection);
+        model.addNewPredefinedFileSuffixes(suffixes);
 
         view.setInfoMessage("The new suffixes added: " + name);
     }
 
     @Override
     public void newPredefinedSuffixesChosenByUser(String categoryName) {
-        Optional<ISuffixesCollection> collectionOpt = model.getPredefinesFileSuffixesCollectionByName(categoryName);
-        if (collectionOpt.isPresent()) {
-            ISuffixesCollection collection = collectionOpt.get();
-            model.setSuffixes(collection);
-            view.setSuffixes(collection);
+        Optional<ISuffixes> suffixesOpt = model.getPredefinesFileSuffixesByName(categoryName);
+        if (suffixesOpt.isPresent()) {
+            ISuffixes suffixes = suffixesOpt.get();
+            model.setSuffixes(suffixes);
+            view.setSuffixes(suffixes);
             view.setInfoMessage("Suffixes have been set: " + categoryName);
         } else {
             view.setErrorMessage(
@@ -120,8 +120,8 @@ public class SimpleController extends AbstractController implements ISupportedAc
     }
 
     @Override
-    public void removeSuffixesCollection(@NotNull String name) {
-        model.removePredefinedFileSuffixesCollection(name);
+    public void removeSuffixes(@NotNull String name) {
+        model.removePredefinedFileSuffixes(name);
     }
 
     @Override

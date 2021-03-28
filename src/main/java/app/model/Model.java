@@ -2,10 +2,7 @@ package app.model;
 
 import app.model.jobs.IJobManager;
 import app.model.jobs.Job;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
-import app.model.jobs.Job;
-import app.model.jobs.IJobManager;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
 import org.jetbrains.annotations.NotNull;
 
 import java.beans.PropertyChangeListener;
@@ -61,8 +58,8 @@ public abstract class Model extends AbstractObservableModel {
     public abstract void setOutputFolder(@NotNull Path newOutputFolder);
     public abstract @NotNull Path getOutputFolder();
 
-    public abstract void setSuffixes(@NotNull ISuffixesCollection newSuffixes);
-    public abstract @NotNull ISuffixesCollection getSuffixes();
+    public abstract void setSuffixes(@NotNull ISuffixes newSuffixes);
+    public abstract @NotNull ISuffixes getSuffixes();
 
     public abstract @NotNull List<String> getSupportedOperationNames();
     public abstract void setOperation(@NotNull String operationName) throws IllegalArgumentException;
@@ -88,10 +85,10 @@ public abstract class Model extends AbstractObservableModel {
      */
     public abstract @NotNull Job createJobAsyncWithDefaultParameters(@NotNull PropertyChangeListener listener);
 
-    public abstract @NotNull CollectionOfSuffixesCollectionsStaticData getPredefinedFileSuffixesDb();
-    public abstract void addNewPredefinedFileSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection);
-    public abstract void removePredefinedFileSuffixesCollection(@NotNull String name);
-    public abstract @NotNull Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(@NotNull String name);
+    public abstract @NotNull CollectionOfSuffixesStaticData getPredefinedFileSuffixesDb();
+    public abstract void addNewPredefinedFileSuffixes(@NotNull ISuffixes newPredefinedSuffixes);
+    public abstract void removePredefinedFileSuffixes(@NotNull String name);
+    public abstract @NotNull Optional<ISuffixes> getPredefinesFileSuffixesByName(@NotNull String name);
 
     /**
      * Use persistent storage.

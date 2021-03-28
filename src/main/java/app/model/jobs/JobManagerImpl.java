@@ -1,6 +1,6 @@
 package app.model.jobs;
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.file_operations.IFileOperation;
 
 import java.nio.file.Path;
@@ -23,7 +23,7 @@ public class JobManagerImpl implements IJobManager {
     }
 
     @Override
-    public int createJob(Path inputFolder, Path outputFolder, ISuffixesCollection suffixes, IFileOperation fileOperation) {
+    public int createJob(Path inputFolder, Path outputFolder, ISuffixes suffixes, IFileOperation fileOperation) {
         Job newJob = new JobImpl(inputFolder, outputFolder, suffixes, fileOperation);
         appendJob(newJob);
         return newJob.getId();

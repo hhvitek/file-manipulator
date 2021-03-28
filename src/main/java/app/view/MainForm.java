@@ -2,7 +2,7 @@ package app.view;
 
 import app.controller.ISupportedActionsForViewByController;
 import app.model.Model;
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.ModelObservableEvents;
 import app.model.jobs.JobStatus;
 import org.jetbrains.annotations.NotNull;
@@ -154,14 +154,14 @@ public class MainForm extends AbstractView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String suffixesCollectionName = textFieldName.getText();
-                controller.removeSuffixesCollection(suffixesCollectionName);
+                controller.removeSuffixes(suffixesCollectionName);
             }
         });
         buttonDeleteSuffixesCategory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String suffixesCollectionName = textFieldName.getText();
-                controller.removeSuffixesCollection(suffixesCollectionName);
+                controller.removeSuffixes(suffixesCollectionName);
             }
         });
         /*
@@ -206,7 +206,7 @@ public class MainForm extends AbstractView {
     }
 
     private void fillPredefinedSuffixesFromModel() {
-        for(ISuffixesCollection predefinedCategory: model.getPredefinedFileSuffixesDb()) {
+        for(ISuffixes predefinedCategory: model.getPredefinedFileSuffixesDb()) {
             comboBoxChoosePredefinedFileSuffixes.addItem(
                     predefinedCategory.getName()
             );
@@ -254,7 +254,7 @@ public class MainForm extends AbstractView {
     }
 
     @Override
-    public void setSuffixes(@NotNull ISuffixesCollection suffixes) {
+    public void setSuffixes(@NotNull ISuffixes suffixes) {
         textFieldFileSuffixes.setText(
                 suffixes.getSuffixesAsDelimitedString(SUFFIXES_JOINER_STRING)
         );

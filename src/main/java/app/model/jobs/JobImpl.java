@@ -1,6 +1,6 @@
 package app.model.jobs;
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.ModelObservableEvents;
 import app.model.file_operations.FileOperationException;
 import app.model.file_operations.IFileOperation;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
- * If suffixesCollection passed in constructor is null, the Operation is applied to all files...
+ * If ISuffixes passed in constructor is null, the Operation is applied to all files...
  */
 public class JobImpl extends Job {
 
@@ -41,7 +41,7 @@ public class JobImpl extends Job {
 
     private final Path inputFolder;
     private final Path outputFolder;
-    private final ISuffixesCollection suffixesCollection;
+    private final ISuffixes suffixes;
     private final IFileOperation fileOperation;
 
     private final int jobId;
@@ -50,11 +50,11 @@ public class JobImpl extends Job {
 
     public JobImpl(@NotNull Path inputFolder,
                    @NotNull Path outputFolder,
-                   @Nullable ISuffixesCollection suffixesCollection,
+                   @Nullable ISuffixes suffixes,
                    @NotNull IFileOperation fileOperation) {
         this.inputFolder = inputFolder;
         this.outputFolder = outputFolder;
-        this.suffixesCollection = suffixesCollection;
+        this.suffixes = suffixes;
         this.fileOperation = fileOperation;
 
         jobId = autoIncrement.incrementAndGet();
@@ -81,7 +81,7 @@ public class JobImpl extends Job {
             isRunning = true;
             shouldStop = false;
 
-            List<Path> foundFiles = fileLocator.findUsingSuffixesCollection(inputFolder, suffixesCollection);
+            List<Path> foundFiles = fileLocator.findUsingSuffixes(inputFolder, suffixes);
             jobStatus = new JobStatus(jobId, foundFiles.size());
             firePropertyChange(ModelObservableEvents.JOB_RUNNING, jobId, jobStatus);
 

@@ -17,7 +17,7 @@ import java.util.List;
  *
  * <b>Every suffix is trimmed before it is added into the collection</b>
  */
-public interface ISuffixesCollection extends Iterable<String> {
+public interface ISuffixes extends Iterable<String> {
 
     /**
      * All suffixes are automatically trimmed before they are added into the collection.
