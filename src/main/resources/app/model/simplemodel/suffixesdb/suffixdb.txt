@@ -3,6 +3,7 @@
 # COLUMN_SEPARATOR = "||"
 # SUFFIX_SEPARATOR = ","
 
+ALL||
 MY_LIST2||txt,out,hello
 VIDEO||mp4,avi,webm
 MY_LIST||txt,out,hello
