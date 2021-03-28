@@ -1,9 +1,9 @@
 package app.model.simplemodel.staticdata.jdbcdqlite;
 
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
+import app.model.simplemodel.SuffixesImpl;
 import app.model.simplemodel.staticdata.IModelStaticData;
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.file_operations.FileOperationEnum;
 
 import org.jetbrains.annotations.NotNull;
@@ -96,52 +96,52 @@ public class SqliteManagerUtility implements IModelStaticData {
     }
 
     @Override
-    public void setCurrentSuffixesCollection(@NotNull ISuffixesCollection newSuffixesCollection) {
+    public void setCurrentSuffixes(@NotNull ISuffixes newSuffixes) {
 
     }
 
     @Override
-    public @NotNull ISuffixesCollection getCurrentSuffixesCollection() {
-        String suffixes = getCurrentVariable("suffixes_collection");
+    public @NotNull ISuffixes getCurrentSuffixes() {
+        String suffixes = getCurrentVariable("suffixes");
         return null;
     }
 
 
     @Override
-    public CollectionOfSuffixesCollectionsStaticData getCollectionOfSuffixesCollectionsStaticData() {
+    public CollectionOfSuffixesStaticData getCollectionOfSuffixesStaticData() {
         return null;
     }
 
     @Override
-    public void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection) {
+    public void addNewPredefinedSuffixes(@NotNull ISuffixes newPredefinedSuffixes) {
 
     }
 
     @Override
-    public void removePredefinedSuffixesCollection(@NotNull String name) {
+    public void removePredefinedSuffixes(@NotNull String name) {
 
     }
 
-    private CollectionOfSuffixesCollectionsStaticData getCollectionOfSuffixesCollectionsFromResultSet(ResultSet rs) throws SQLException {
-        CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData = new CollectionOfSuffixesCollectionsStaticData();
+    private CollectionOfSuffixesStaticData getCollectionOfSuffixessFromResultSet(ResultSet rs) throws SQLException {
+        CollectionOfSuffixesStaticData collectionOfSuffixesStaticData = new CollectionOfSuffixesStaticData();
         while (rs.next()) {
-            ISuffixesCollection suffixesCollection = getSuffixesCollectionFromResultSet(rs);
-            collectionOfSuffixesCollectionsStaticData.addNewSuffixesCollectionIfAbsent(suffixesCollection);
+            ISuffixes suffixes = getSuffixesFromResultSet(rs);
+            collectionOfSuffixesStaticData.addNewSuffixesIfAbsent(suffixes);
         }
-        return collectionOfSuffixesCollectionsStaticData;
+        return collectionOfSuffixesStaticData;
     }
 
     @Override
-    public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name) {
+    public Optional<ISuffixes> getPredefinedSuffixesByName(@NotNull String name) {
         String query = "SELECT name,suffixes\n"
-                + " FROM suffixes_collection\n"
+                + " FROM suffixes\n"
                 + " WHERE name = '?'\n";
 
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)){
             preparedStatement.setString(1, name);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                return Optional.of(getSuffixesCollectionFromResultSet(rs));
+                return Optional.of(getSuffixesFromResultSet(rs));
             } else {
                 return Optional.empty();
             }
@@ -160,12 +160,12 @@ public class SqliteManagerUtility implements IModelStaticData {
         throw new UnsupportedOperationException("This operation is not supported.");
     }
 
-    private ISuffixesCollection getSuffixesCollectionFromResultSet(ResultSet rs) throws SQLException {
+    private ISuffixes getSuffixesFromResultSet(ResultSet rs) throws SQLException {
         String name = rs.getString("name");
-        String suffixes = rs.getString("suffixes");
+        String suffixesString = rs.getString("suffixes");
 
-        ISuffixesCollection suffixesCollection = new SuffixesCollectionImpl(name);
-        suffixesCollection.addSuffixes(suffixes, ",");
-        return suffixesCollection;
+        ISuffixes suffixes = new SuffixesImpl(name);
+        suffixes.addSuffixes(suffixesString, ",");
+        return suffixes;
     }
 }

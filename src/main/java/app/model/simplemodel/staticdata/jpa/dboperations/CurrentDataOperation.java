@@ -69,8 +69,8 @@ public class CurrentDataOperation {
         return getDefaultInputFolder().resolve(DEFAULT_OUTPUT_FOLDER_NAME);
     }
 
-    public String getSuffixesCollectionNameId() throws ElemNotFoundException {
-        return getCurrentDataEntityValue("suffixes_collection");
+    public String getSuffixesNameId() throws ElemNotFoundException {
+        return getCurrentDataEntityValue("suffixes");
     }
 
     public Integer getCollectionId() throws ElemNotFoundException {
@@ -83,8 +83,8 @@ public class CurrentDataOperation {
         }
     }
 
-    public void setSuffixesCollection(@NotNull String name) {
-        setCurrentDataEntity("suffixes_collection", name);
+    public void setSuffixes(@NotNull String name) {
+        setCurrentDataEntity("suffixes", name);
     }
 
     public void setCollection(@NotNull String id) {

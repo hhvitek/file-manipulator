@@ -1,9 +1,9 @@
 package app.model.simplemodel.staticdata.jdbcdqlite;
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.SuffixesDbException;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
+import app.model.simplemodel.SuffixesImpl;
 import app.model.simplemodel.suffixesdb.ISuffixesDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +32,11 @@ public class FromSqliteDbISuffixesDbImpl implements ISuffixesDb {
     }
 
     @Override
-    public CollectionOfSuffixesCollectionsStaticData load() throws SuffixesDbException {
+    public CollectionOfSuffixesStaticData load() throws SuffixesDbException {
         initConnection(dbUrl);
-        CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData = selectAll();
+        CollectionOfSuffixesStaticData collectionOfSuffixesStaticData = selectAll();
         closeConnection();
-        return collectionOfSuffixesCollectionsStaticData;
+        return collectionOfSuffixesStaticData;
     }
 
     private void initConnection(String dbUrl) throws DbConnectionErrorException {
@@ -68,7 +68,7 @@ public class FromSqliteDbISuffixesDbImpl implements ISuffixesDb {
         }
     }
 
-    private CollectionOfSuffixesCollectionsStaticData selectAll() throws DbConnectionErrorException {
+    private CollectionOfSuffixesStaticData selectAll() throws DbConnectionErrorException {
         String query = String.format(
                 "SELECT name, suffixes FROM %s;",
                 DB_TABLENAME
@@ -76,37 +76,37 @@ public class FromSqliteDbISuffixesDbImpl implements ISuffixesDb {
 
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)){
             ResultSet rs = preparedStatement.executeQuery();
-            return getCollectionOfSuffixesCollectionsFromResultSet(rs);
+            return getCollectionOfSuffixessFromResultSet(rs);
         } catch (SQLException ex) {
             throw new DbConnectionErrorException("SqlException error during working with DB", ex);
         }
     }
 
-    private CollectionOfSuffixesCollectionsStaticData getCollectionOfSuffixesCollectionsFromResultSet(ResultSet rs) throws SQLException {
-        CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData = new CollectionOfSuffixesCollectionsStaticData();
+    private CollectionOfSuffixesStaticData getCollectionOfSuffixessFromResultSet(ResultSet rs) throws SQLException {
+        CollectionOfSuffixesStaticData collectionOfSuffixesStaticData = new CollectionOfSuffixesStaticData();
         while (rs.next()) {
-            ISuffixesCollection suffixesCollection = getSuffixesCollectionFromResultSet(rs);
-            collectionOfSuffixesCollectionsStaticData.addNewSuffixesCollectionIfAbsent(suffixesCollection);
+            ISuffixes suffixes = getSuffixesFromResultSet(rs);
+            collectionOfSuffixesStaticData.addNewSuffixesIfAbsent(suffixes);
         }
-        return collectionOfSuffixesCollectionsStaticData;
+        return collectionOfSuffixesStaticData;
     }
 
-    private ISuffixesCollection getSuffixesCollectionFromResultSet(ResultSet rs) throws SQLException {
+    private ISuffixes getSuffixesFromResultSet(ResultSet rs) throws SQLException {
          String name = rs.getString("name");
-         String suffixes = rs.getString("suffixes");
+         String suffixesString = rs.getString("suffixes");
 
-         ISuffixesCollection suffixesCollection = new SuffixesCollectionImpl(name);
-         suffixesCollection.addSuffixes(suffixes, ",");
-         return suffixesCollection;
+         ISuffixes suffixes = new SuffixesImpl(name);
+         suffixes.addSuffixes(suffixesString, ",");
+         return suffixes;
     }
 
     @Override
-    public void store(CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData) throws SuffixesDbException {
+    public void store(CollectionOfSuffixesStaticData collectionOfSuffixesStaticData) throws SuffixesDbException {
         initConnection(dbUrl);
 
         try {
             createTableIfNotExists();
-            upsertTable(collectionOfSuffixesCollectionsStaticData);
+            upsertTable(collectionOfSuffixesStaticData);
         } catch (SQLException throwables) {
             String errorMessage = throwables.getLocalizedMessage();
             logger.error(errorMessage);
@@ -130,13 +130,13 @@ public class FromSqliteDbISuffixesDbImpl implements ISuffixesDb {
         }
     }
 
-    private void upsertTable(CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData) throws SQLException {
-        for(ISuffixesCollection suffixesCollection: collectionOfSuffixesCollectionsStaticData) {
-            upsertRow(suffixesCollection);
+    private void upsertTable(CollectionOfSuffixesStaticData collectionOfSuffixesStaticData) throws SQLException {
+        for(ISuffixes suffixes: collectionOfSuffixesStaticData) {
+            upsertRow(suffixes);
         }
     }
 
-    private void upsertRow(ISuffixesCollection suffixesCollection) throws SQLException {
+    private void upsertRow(ISuffixes suffixes) throws SQLException {
         String query = String.format(
                 "INSERT INTO %s %n" +
                     "(name, suffixes) %n" +
@@ -147,18 +147,18 @@ public class FromSqliteDbISuffixesDbImpl implements ISuffixesDb {
         );
 
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
-            String name = suffixesCollection.getName();
-            String suffixes = suffixesCollection.getSuffixesAsDelimitedString(",");
+            String name = suffixes.getName();
+            String suffixesString = suffixes.getSuffixesAsDelimitedString(",");
 
             preparedStatement.setString(1, name);
-            preparedStatement.setString(2, suffixes);
+            preparedStatement.setString(2, suffixesString);
 
             int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated != 1) {
                 logger.warn(
                         "Something went wrong during DB insert/update. " +
                                 "Rows updated: {}, Expected 1 row inserted/updated. " +
-                                suffixesCollection,
+                                suffixesString,
                         rowsUpdated);
             }
         }

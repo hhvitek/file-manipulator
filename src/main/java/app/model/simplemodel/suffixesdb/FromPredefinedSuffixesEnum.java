@@ -1,33 +1,33 @@
 package app.model.simplemodel.suffixesdb;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.AllSuffixesCollection;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.ISuffixes;
+import app.model.simplemodel.AllSuffixes;
+import app.model.simplemodel.SuffixesImpl;
 
 public enum FromPredefinedSuffixesEnum {
     AUDIO {
         @Override
-        public ISuffixesCollection getSuffixes() {
-            return createSuffixesCollection(name(), Constants.audioSuffixes);
+        public ISuffixes getSuffixes() {
+            return createSuffixes(name(), Constants.audioSuffixes);
         }
     },
     VIDEO {
         @Override
-        public ISuffixesCollection getSuffixes() {
-            return createSuffixesCollection(name(), Constants.videoSuffixes);
+        public ISuffixes getSuffixes() {
+            return createSuffixes(name(), Constants.videoSuffixes);
         }
     },
     AUDIO_AND_VIDEO {
         @Override
-        public ISuffixesCollection getSuffixes() {
+        public ISuffixes getSuffixes() {
             String combinedAudioAndVideo = Constants.audioSuffixes + "," + Constants.videoSuffixes;
-            return createSuffixesCollection(name(), combinedAudioAndVideo);
+            return createSuffixes(name(), combinedAudioAndVideo);
         }
     },
     ALL {
         @Override
-        public ISuffixesCollection getSuffixes() {
-            return new AllSuffixesCollection();
+        public ISuffixes getSuffixes() {
+            return new AllSuffixes();
         }
     };
 
@@ -36,11 +36,11 @@ public enum FromPredefinedSuffixesEnum {
         static final String videoSuffixes = "avi,mp4";
     }
 
-    protected ISuffixesCollection createSuffixesCollection(String categoryName, String delimitedSuffixes) {
-        ISuffixesCollection category = new SuffixesCollectionImpl(categoryName);
+    protected ISuffixes createSuffixes(String categoryName, String delimitedSuffixes) {
+        ISuffixes category = new SuffixesImpl(categoryName);
         category.addSuffixes(delimitedSuffixes, ",");
         return category;
     }
 
-    public abstract ISuffixesCollection getSuffixes();
+    public abstract ISuffixes getSuffixes();
 }

@@ -1,7 +1,7 @@
 package app.model.simplemodel;
 
 
-import app.model.ISuffixesCollection;
+import app.model.ISuffixes;
 import app.model.Model;
 import app.model.file_operations.FileOperationEnum;
 
@@ -76,17 +76,17 @@ public class ModelImpl extends Model implements PropertyChangeListener {
     }
 
     @Override
-    public void setSuffixes(@NotNull ISuffixesCollection newSuffixes) {
+    public void setSuffixes(@NotNull ISuffixes newSuffixes) {
 
-        staticData.setCurrentSuffixesCollection(newSuffixes);
+        staticData.setCurrentSuffixes(newSuffixes);
 
         logger.debug("Suffixes changed: <{}>", newSuffixes);
         firePropertyChange(SELECTED_SUFFIXES_COLLECTION_CHANGED, newSuffixes.getName(), newSuffixes);
     }
 
     @Override
-    public @NotNull ISuffixesCollection getSuffixes() {
-        return staticData.getCurrentSuffixesCollection();
+    public @NotNull ISuffixes getSuffixes() {
+        return staticData.getCurrentSuffixes();
     }
 
     @Override
@@ -146,29 +146,29 @@ public class ModelImpl extends Model implements PropertyChangeListener {
     }
 
     @Override
-    public @NotNull CollectionOfSuffixesCollectionsStaticData getPredefinedFileSuffixesDb() {
-        return staticData.getCollectionOfSuffixesCollectionsStaticData();
+    public @NotNull CollectionOfSuffixesStaticData getPredefinedFileSuffixesDb() {
+        return staticData.getCollectionOfSuffixesStaticData();
     }
 
     @Override
-    public void addNewPredefinedFileSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection) {
-        staticData.addNewPredefinedSuffixesCollection(newPredefinedSuffixesCollection);
+    public void addNewPredefinedFileSuffixes(@NotNull ISuffixes newPredefinedSuffixes) {
+        staticData.addNewPredefinedSuffixes(newPredefinedSuffixes);
 
-        logger.debug("New suffixes added: <{}>", newPredefinedSuffixesCollection.getName());
-        firePropertyChange(NEW_SUFFIXES_COLLECTION_ADDED, newPredefinedSuffixesCollection.getName(), newPredefinedSuffixesCollection);
+        logger.debug("New suffixes added: <{}>", newPredefinedSuffixes.getName());
+        firePropertyChange(NEW_SUFFIXES_COLLECTION_ADDED, newPredefinedSuffixes.getName(), newPredefinedSuffixes);
     }
 
     @Override
-    public void removePredefinedFileSuffixesCollection(@NotNull String name) {
-        staticData.removePredefinedSuffixesCollection(name);
+    public void removePredefinedFileSuffixes(@NotNull String name) {
+        staticData.removePredefinedSuffixes(name);
 
         logger.debug("Suffixes removed: <{}>", name);
         firePropertyChange(SUFFIXES_COLLECTION_DELETED, name, -0);
     }
 
     @Override
-    public Optional<ISuffixesCollection> getPredefinesFileSuffixesCollectionByName(@NotNull String name) {
-        return staticData.getPredefinedSuffixesCollectionByName(name);
+    public Optional<ISuffixes> getPredefinesFileSuffixesByName(@NotNull String name) {
+        return staticData.getPredefinedSuffixesByName(name);
     }
 
     @Override
@@ -180,7 +180,7 @@ public class ModelImpl extends Model implements PropertyChangeListener {
     public void countRelevantFilesInInputFolder() {
         IFileLocator fileLocator = new FileLocatorImpl();
         fileLocator.setRootFolder(getInputFolder());
-        fileLocator.setSuffixesCollection(getSuffixes());
+        fileLocator.setSuffixes(getSuffixes());
 
         locateFilesAsync.locate(fileLocator);
     }

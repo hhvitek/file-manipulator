@@ -1,8 +1,8 @@
 package app.model.simplemodel.staticdata;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
-import app.model.simplemodel.SuffixesCollectionImpl;
+import app.model.ISuffixes;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
+import app.model.simplemodel.SuffixesImpl;
 import app.model.simplemodel.suffixesdb.ISuffixesDb;
 import app.model.file_operations.FileOperationEnum;
 
@@ -23,10 +23,10 @@ public class AbstractIModelStaticData implements IModelStaticData {
 
     private Path inputFolder;
     private Path outputFolder;
-    private CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData;
+    private CollectionOfSuffixesStaticData collectionOfSuffixesStaticData;
     private final ISuffixesDb fromSuffixesDb;
 
-    private ISuffixesCollection currentSuffixesCollection;
+    private ISuffixes currentSuffixes;
 
     private FileOperationEnum currentFileOperation;
 
@@ -35,9 +35,9 @@ public class AbstractIModelStaticData implements IModelStaticData {
         outputFolder = inputFolder.resolve(DEFAULT_OUTPUT_FOLDER_NAME);
 
         this.fromSuffixesDb = fromSuffixesDb;
-        collectionOfSuffixesCollectionsStaticData = fromSuffixesDb.load();
+        collectionOfSuffixesStaticData = fromSuffixesDb.load();
 
-        initializeCurrentSuffixes(collectionOfSuffixesCollectionsStaticData);
+        initializeCurrentSuffixes(collectionOfSuffixesStaticData);
 
         this.currentFileOperation = FileOperationEnum.COPY;
     }
@@ -47,11 +47,11 @@ public class AbstractIModelStaticData implements IModelStaticData {
         return Paths.get(userDirProperty);
     }
 
-    private void initializeCurrentSuffixes(CollectionOfSuffixesCollectionsStaticData suffixesDb) {
+    private void initializeCurrentSuffixes(CollectionOfSuffixesStaticData suffixesDb) {
         if (!suffixesDb.isEmpty()) {
-            currentSuffixesCollection = suffixesDb.getFirst();
+            currentSuffixes = suffixesDb.getFirst();
         } else {
-            currentSuffixesCollection = new SuffixesCollectionImpl(DEFAULT_SUFFIXES_COLLECTION_NAME);
+            currentSuffixes = new SuffixesImpl(DEFAULT_SUFFIXES_COLLECTION_NAME);
         }
     }
 
@@ -76,42 +76,42 @@ public class AbstractIModelStaticData implements IModelStaticData {
     }
 
     @Override
-    public void setCurrentSuffixesCollection(@NotNull ISuffixesCollection newSuffixesCollection) {
-        currentSuffixesCollection = newSuffixesCollection;
+    public void setCurrentSuffixes(@NotNull ISuffixes newSuffixes) {
+        currentSuffixes = newSuffixes;
     }
 
     @Override
-    public @NotNull ISuffixesCollection getCurrentSuffixesCollection() {
-        return currentSuffixesCollection;
+    public @NotNull ISuffixes getCurrentSuffixes() {
+        return currentSuffixes;
     }
 
     @Override
-    public CollectionOfSuffixesCollectionsStaticData getCollectionOfSuffixesCollectionsStaticData() {
-        return collectionOfSuffixesCollectionsStaticData;
+    public CollectionOfSuffixesStaticData getCollectionOfSuffixesStaticData() {
+        return collectionOfSuffixesStaticData;
     }
 
     @Override
-    public void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection) {
-        collectionOfSuffixesCollectionsStaticData.updateSuffixesCollectionOrAddNewOne(newPredefinedSuffixesCollection);
+    public void addNewPredefinedSuffixes(@NotNull ISuffixes newPredefinedSuffixes) {
+        collectionOfSuffixesStaticData.updateSuffixesOrAddNewOne(newPredefinedSuffixes);
         persistSuffixesDbIfSupported();
     }
 
     private void persistSuffixesDbIfSupported() {
         if (fromSuffixesDb.isPersistent()) {
             logger.debug("DB supports persistence - storing whole collection into db.");
-            fromSuffixesDb.store(collectionOfSuffixesCollectionsStaticData);
+            fromSuffixesDb.store(collectionOfSuffixesStaticData);
         }
     }
 
     @Override
-    public void removePredefinedSuffixesCollection(@NotNull String name) {
-        collectionOfSuffixesCollectionsStaticData.removeSuffixesCollectionIfExists(name);
+    public void removePredefinedSuffixes(@NotNull String name) {
+        collectionOfSuffixesStaticData.removeSuffixesIfExists(name);
 
     }
 
     @Override
-    public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name) {
-        return collectionOfSuffixesCollectionsStaticData.getSuffixesCollectionByName(name);
+    public Optional<ISuffixes> getPredefinedSuffixesByName(@NotNull String name) {
+        return collectionOfSuffixesStaticData.getSuffixesByName(name);
     }
 
     @Override

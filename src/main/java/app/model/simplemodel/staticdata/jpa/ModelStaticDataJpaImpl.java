@@ -1,14 +1,14 @@
 package app.model.simplemodel.staticdata.jpa;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
+import app.model.ISuffixes;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
 import app.model.simplemodel.staticdata.IModelStaticData;
-import app.model.simplemodel.staticdata.jpa.dboperations.CollectionOfSuffixesCollectionOperation;
+import app.model.simplemodel.staticdata.jpa.dboperations.CollectionOfSuffixesOperation;
 import app.model.simplemodel.staticdata.jpa.dboperations.CurrentDataOperation;
 import app.model.simplemodel.staticdata.jpa.dboperations.ElemNotFoundException;
-import app.model.simplemodel.staticdata.jpa.dboperations.SuffixesCollectionOperation;
-import app.model.simplemodel.staticdata.jpa.entities.CollectionOfSuffixesCollectionsEntity;
-import app.model.simplemodel.staticdata.jpa.entities.SuffixesCollectionEntity;
+import app.model.simplemodel.staticdata.jpa.dboperations.SuffixesOperation;
+import app.model.simplemodel.staticdata.jpa.entities.CollectionOfSuffixesEntity;
+import app.model.simplemodel.staticdata.jpa.entities.SuffixesEntity;
 import app.model.file_operations.FileOperationEnum;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,14 +29,14 @@ public class ModelStaticDataJpaImpl implements IModelStaticData {
             Persistence.createEntityManagerFactory("my-sqlite");
 
     private final CurrentDataOperation currentDataOperation;
-    private final SuffixesCollectionOperation suffixesCollectionOperation;
-    private final CollectionOfSuffixesCollectionOperation collectionOfSuffixesCollectionOperation;
+    private final SuffixesOperation suffixesCollectionOperation;
+    private final CollectionOfSuffixesOperation collectionOfSuffixesOperation;
 
     public ModelStaticDataJpaImpl() {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager(); // Retrieve an application managed entity manager
         currentDataOperation = new CurrentDataOperation(entityManager);
-        suffixesCollectionOperation = new SuffixesCollectionOperation(entityManager);
-        collectionOfSuffixesCollectionOperation = new CollectionOfSuffixesCollectionOperation(entityManager);
+        suffixesCollectionOperation = new SuffixesOperation(entityManager);
+        collectionOfSuffixesOperation = new CollectionOfSuffixesOperation(entityManager);
 
         initializeDatabase();
     }
@@ -44,8 +44,8 @@ public class ModelStaticDataJpaImpl implements IModelStaticData {
     private void initializeDatabase() {
         initInputFolder();
         initOutputFolder();
-        initCollectionsOfSuffixesCollections();
-        initSuffixesCollection();
+        initCollectionsOfSuffixes();
+        initSuffixes();
         initOperation();
     }
 
@@ -65,35 +65,35 @@ public class ModelStaticDataJpaImpl implements IModelStaticData {
         }
     }
 
-    private void initSuffixesCollection() {
-        if (!suffixesCollectionOperation.doCurrentSuffixesCollectionExists()) {
-            logger.info("Initializing current suffixesCollection with default values.");
-            initSuffixesCollectionToDefault();
+    private void initSuffixes() {
+        if (!suffixesCollectionOperation.doCurrentSuffixesExists()) {
+            logger.info("Initializing current suffixes with default values.");
+            initSuffixesToDefault();
         }
     }
 
-    private void initSuffixesCollectionToDefault() {
-        final ISuffixesCollection defaultSuffixesCollection = suffixesCollectionOperation.getDefaultSuffixesCollection();
-        suffixesCollectionOperation.createNewUpdateIfAlreadyExists(defaultSuffixesCollection);
+    private void initSuffixesToDefault() {
+        final ISuffixes defaultSuffixes = suffixesCollectionOperation.getDefaultSuffixes();
+        suffixesCollectionOperation.createNewUpdateIfAlreadyExists(defaultSuffixes);
         try {
-            suffixesCollectionOperation.setSuffixesCollectionAsCurrent(defaultSuffixesCollection.getName());
+            suffixesCollectionOperation.setSuffixesAsCurrent(defaultSuffixes.getName());
         } catch (ElemNotFoundException e) {
             logger.error("This should not happen. Indicates Database error.", e);
         }
     }
 
-    private void initCollectionsOfSuffixesCollections() {
-        if (!collectionOfSuffixesCollectionOperation.doCurrentCollectionExists()) {
+    private void initCollectionsOfSuffixes() {
+        if (!collectionOfSuffixesOperation.doCurrentCollectionExists()) {
             logger.info("Initializing current collection with default values.");
             initCollectionToDefault();
         }
     }
 
     private void initCollectionToDefault() {
-        final CollectionOfSuffixesCollectionsStaticData defaultCollection = collectionOfSuffixesCollectionOperation.getDefaultCollection();
-        Integer collectionId = collectionOfSuffixesCollectionOperation.addNewCollection(defaultCollection);
+        final CollectionOfSuffixesStaticData defaultCollection = collectionOfSuffixesOperation.getDefaultCollection();
+        Integer collectionId = collectionOfSuffixesOperation.addNewCollection(defaultCollection);
         try {
-            collectionOfSuffixesCollectionOperation.setCollectionAsCurrent(collectionId);
+            collectionOfSuffixesOperation.setCollectionAsCurrent(collectionId);
         } catch (ElemNotFoundException e) {
             logger.error("This should not happen. Indicates Database error.", e);
         }
@@ -134,60 +134,60 @@ public class ModelStaticDataJpaImpl implements IModelStaticData {
     }
 
     @Override
-    public void setCurrentSuffixesCollection(@NotNull ISuffixesCollection newSuffixesCollection) {
-        currentDataOperation.setSuffixesCollection(newSuffixesCollection.getName());
+    public void setCurrentSuffixes(@NotNull ISuffixes newSuffixes) {
+        currentDataOperation.setSuffixes(newSuffixes.getName());
         // TODO dangerous if not added prevoiuslt
     }
 
     @Override
-    public @NotNull ISuffixesCollection getCurrentSuffixesCollection() {
+    public @NotNull ISuffixes getCurrentSuffixes() {
         try {
-            SuffixesCollectionEntity entity = suffixesCollectionOperation.getCurrentSuffixesCollection();
-            return entity.toISuffixesCollection();
+            SuffixesEntity entity = suffixesCollectionOperation.getCurrentSuffixes();
+            return entity.toISuffixes();
         } catch (ElemNotFoundException ex) {
-            logger.error("The suffixesCollection parameter was not found in database. It should have already been initialized previously.");
-            return suffixesCollectionOperation.getDefaultSuffixesCollection();
+            logger.error("The suffixes parameter was not found in database. It should have already been initialized previously.");
+            return suffixesCollectionOperation.getDefaultSuffixes();
         }
     }
 
     @Override
-    public CollectionOfSuffixesCollectionsStaticData getCollectionOfSuffixesCollectionsStaticData() {
+    public CollectionOfSuffixesStaticData getCollectionOfSuffixesStaticData() {
         try {
-            CollectionOfSuffixesCollectionsEntity entity = collectionOfSuffixesCollectionOperation.getCurrentCollectionEntity();
+            CollectionOfSuffixesEntity entity = collectionOfSuffixesOperation.getCurrentCollectionEntity();
             return entity.toCollection();
         } catch (ElemNotFoundException ex) {
             logger.error("The collection parameter was not found in database. It should have already been initialized previously.");
-            return collectionOfSuffixesCollectionOperation.getDefaultCollection();
+            return collectionOfSuffixesOperation.getDefaultCollection();
         }
     }
 
     @Override
-    public void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection) {
-        SuffixesCollectionEntity entity = suffixesCollectionOperation.createNewUpdateIfAlreadyExists(newPredefinedSuffixesCollection); // stored into db as new
+    public void addNewPredefinedSuffixes(@NotNull ISuffixes newPredefinedSuffixes) {
+        SuffixesEntity entity = suffixesCollectionOperation.createNewUpdateIfAlreadyExists(newPredefinedSuffixes); // stored into db as new
 
         try {
-            CollectionOfSuffixesCollectionsEntity collectionOfSuffixesCollectionsEntity = collectionOfSuffixesCollectionOperation.getCurrentCollectionEntity();
-            collectionOfSuffixesCollectionsEntity.addSuffixesCollection(entity);
+            CollectionOfSuffixesEntity collectionOfSuffixesEntity = collectionOfSuffixesOperation.getCurrentCollectionEntity();
+            collectionOfSuffixesEntity.addSuffixes(entity);
         } catch (ElemNotFoundException e) {
             // no current collection ignore
-            logger.warn("No current collection, cannot add a new suffixesCollection into whole collection....");
+            logger.warn("No current collection, cannot add a new suffixes into whole collection....");
         }
 
-        setCurrentSuffixesCollection(newPredefinedSuffixesCollection);
+        setCurrentSuffixes(newPredefinedSuffixes);
 
     }
 
     @Override
-    public void removePredefinedSuffixesCollection(@NotNull String name) {
-        suffixesCollectionOperation.removeSuffixesCollectionIfExist(name);
+    public void removePredefinedSuffixes(@NotNull String name) {
+        suffixesCollectionOperation.removeSuffixesIfExist(name);
         //TODO what happen if removed collection is the current one...
     }
 
     @Override
-    public Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name) {
+    public Optional<ISuffixes> getPredefinedSuffixesByName(@NotNull String name) {
         try {
-            SuffixesCollectionEntity entity = suffixesCollectionOperation.getSuffixesCollectionEntityByName(name);
-            return Optional.of(entity.toISuffixesCollection());
+            SuffixesEntity entity = suffixesCollectionOperation.getSuffixesEntityByName(name);
+            return Optional.of(entity.toISuffixes());
         } catch (ElemNotFoundException e) {
             return Optional.empty();
         }

@@ -1,7 +1,7 @@
 package app.model.simplemodel.suffixesdb;
 
 import app.model.SuffixesDbException;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
 
 /**
  * Just process already existing Enum class...
@@ -9,16 +9,16 @@ import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
  */
 public class FromPredefinedSuffixesEnumISuffixesDbImpl implements ISuffixesDb {
 
-    private final CollectionOfSuffixesCollectionsStaticData categoriesDb;
+    private final CollectionOfSuffixesStaticData categoriesDb;
 
     public FromPredefinedSuffixesEnumISuffixesDbImpl() {
-        categoriesDb = new CollectionOfSuffixesCollectionsStaticData();
+        categoriesDb = new CollectionOfSuffixesStaticData();
         loadAllKnownPredefinedSuffixesFromEnum();
     }
 
     private void loadAllKnownPredefinedSuffixesFromEnum() {
         for(FromPredefinedSuffixesEnum value: FromPredefinedSuffixesEnum.values()) {
-            categoriesDb.addNewSuffixesCollectionIfAbsent(value.getSuffixes());
+            categoriesDb.addNewSuffixesIfAbsent(value.getSuffixes());
         }
     }
 
@@ -28,12 +28,12 @@ public class FromPredefinedSuffixesEnumISuffixesDbImpl implements ISuffixesDb {
     }
 
     @Override
-    public CollectionOfSuffixesCollectionsStaticData load() {
+    public CollectionOfSuffixesStaticData load() {
         return categoriesDb;
     }
 
     @Override
-    public void store(CollectionOfSuffixesCollectionsStaticData collectionOfSuffixesCollectionsStaticData) throws SuffixesDbException {
+    public void store(CollectionOfSuffixesStaticData collectionOfSuffixesStaticData) throws SuffixesDbException {
         throw new SuffixesDbException("Not ever implemented - cannot change predefined ENUM!");
     }
 }

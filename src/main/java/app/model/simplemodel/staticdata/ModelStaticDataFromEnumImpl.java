@@ -7,7 +7,7 @@ import app.model.simplemodel.suffixesdb.FromPredefinedSuffixesEnumISuffixesDbImp
  *
  * Does not represents any persistence...
  *
- * Loads predefined CollectionOfSuffixesCollection from existing ENUM
+ * Loads predefined CollectionOfSuffixes from existing ENUM
  */
 public class ModelStaticDataFromEnumImpl extends AbstractIModelStaticData {
 

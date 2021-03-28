@@ -10,7 +10,7 @@ import java.nio.file.Path;
  *
  * Does represent data persistence using local sqlite database.
  *
- * Loads predefined CollectionOfSuffixesCollection from sqlite db.
+ * Loads predefined CollectionOfSuffixes from sqlite db.
  */
 public class ModelStaticDataFromFileImpl extends AbstractIModelStaticData {
 

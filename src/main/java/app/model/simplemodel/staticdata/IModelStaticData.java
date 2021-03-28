@@ -1,7 +1,7 @@
 package app.model.simplemodel.staticdata;
 
-import app.model.ISuffixesCollection;
-import app.model.simplemodel.CollectionOfSuffixesCollectionsStaticData;
+import app.model.ISuffixes;
+import app.model.simplemodel.CollectionOfSuffixesStaticData;
 import app.model.file_operations.FileOperationEnum;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,15 +16,15 @@ public interface IModelStaticData {
     void setOutputFolder(@NotNull Path newOutputFolder);
     @NotNull Path getOutputFolder();
 
-    void setCurrentSuffixesCollection(@NotNull ISuffixesCollection newSuffixesCollection);
-    @NotNull ISuffixesCollection getCurrentSuffixesCollection();
+    void setCurrentSuffixes(@NotNull ISuffixes newSuffixes);
+    @NotNull ISuffixes getCurrentSuffixes();
 
-    CollectionOfSuffixesCollectionsStaticData getCollectionOfSuffixesCollectionsStaticData();
+    CollectionOfSuffixesStaticData getCollectionOfSuffixesStaticData();
 
-    void addNewPredefinedSuffixesCollection(@NotNull ISuffixesCollection newPredefinedSuffixesCollection);
-    void removePredefinedSuffixesCollection(@NotNull String name);
+    void addNewPredefinedSuffixes(@NotNull ISuffixes newPredefinedSuffixes);
+    void removePredefinedSuffixes(@NotNull String name);
 
-    Optional<ISuffixesCollection> getPredefinedSuffixesCollectionByName(@NotNull String name);
+    Optional<ISuffixes> getPredefinedSuffixesByName(@NotNull String name);
 
     @NotNull FileOperationEnum getCurrentOperation();
     void setCurrentOperation(@NotNull FileOperationEnum newOperation);
