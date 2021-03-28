@@ -6,6 +6,8 @@ import app.controller.SimpleController;
 import app.model.Model;
 import app.model.simplemodel.ModelImpl;
 import app.model.simplemodel.staticdata.IModelStaticData;
+import app.model.simplemodel.staticdata.ModelStaticDataFromEnumImpl;
+import app.model.simplemodel.staticdata.ModelStaticDataFromFileImpl;
 import app.model.simplemodel.staticdata.jpa.ModelStaticDataJpaImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +33,8 @@ public final class Main {
         SwingViewUtils.setDefaultFont();
 
         //IModelStaticData modelStaticData = new ModelStaticDataFromEnumImpl();
-        //IModelStaticData modelStaticData = new ModelStaticDataFromFileImpl();
-        IModelStaticData modelStaticData = new ModelStaticDataJpaImpl();
+        IModelStaticData modelStaticData = new ModelStaticDataFromFileImpl();
+        //IModelStaticData modelStaticData = new ModelStaticDataJpaImpl();
         Model model = new ModelImpl(modelStaticData);
 
         AbstractController controller = new SimpleController(model);
