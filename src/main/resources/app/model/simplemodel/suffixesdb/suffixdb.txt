@@ -7,4 +7,4 @@ ALL||
 MY_LIST2||txt,out,hello
 VIDEO||mp4,avi,webm
 MY_LIST||txt,out,hello
-AUDIO||mp3,mpa,ogg
+AUDIO||mp3,mpa,ogg,m4a

@@ -1,14 +1,16 @@
 package app.view;
 
-import org.jetbrains.annotations.NotNull;
+import java.awt.*;
+import java.util.Enumeration;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
-import java.util.Enumeration;
+
+import org.jetbrains.annotations.NotNull;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 
 public final class SwingViewUtils {
 
@@ -18,6 +20,10 @@ public final class SwingViewUtils {
     public static void setLookAndFeelToSystemDefault() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
+
+	public static void setLookAndFeelToFlatLaf() {
+		FlatIntelliJLaf.setup();
+	}
 
     public static void setDefaultFont() {
         setUIFont(new FontUIResource(null, Font.PLAIN, 14));
